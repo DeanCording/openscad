@@ -8,7 +8,7 @@ class OffsetExtrudeNode : public AbstractPolyNode
 {
 public:
 	VISITABLE();
-	OffsetExtrudeNode(const ModuleInstantiation *mi, const std::shared_ptr<EvalContext> &ctx) : AbstractPolyNode(mi, ctx) {
+	OffsetExtrudeNode(const ModuleInstantiation *mi) : AbstractPolyNode(mi) {
 		convexity = 0;
 		fn = fs = fa = 0;
 		delta = height = 1;
