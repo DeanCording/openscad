@@ -9,6 +9,7 @@
 #include "offsetnode.h"
 #include "transformnode.h"
 #include "linearextrudenode.h"
+#include "offsetextrudenode.h"
 #include "rotateextrudenode.h"
 #include "csgnode.h"
 #include "cgaladvnode.h"
@@ -1593,6 +1594,210 @@ Response GeometryEvaluator::visit(State &state, const AbstractIntersectionNode &
 		}
 		addToParent(state, node, geom);
 		node.progress_report();
+	}
+	return Response::ContinueTraversal;
+}
+
+Polygon2d * difference_polygons(Polygon2d *outer, Polygon2d *inner)
+{
+	std::vector<const Polygon2d *> children;
+	children.push_back(outer);
+	children.push_back(inner);
+	return ClipperUtils::apply(children, ClipperLib::ctDifference);
+}
+
+static bool is_poly_flat(Polygon p) {
+	return p[0][2] == p[1][2] && p[0][2] == p[2][2];
+}
+
+static bool rotate_shared_edge(Polygon &a, Polygon &b) {
+	// Try to rotate two polygons shared edge.
+	// Will return true if there was an edge to rotate, will return false if not.
+	//      |\--|         |--/|
+	//      | \ |   ->    | / |
+	//      |--\|         |/--|
+	auto aP = a[2];
+	for (unsigned long i = 0; i < 3; i++) {
+		auto bP = b[2];
+		auto aC = a[i];
+		for (unsigned long j = 0; j < 3; j++) {
+			auto bC = b[j];
+
+			// If shared edge, rotate the edge
+			if (aP[0] == bC[0] && aP[1] == bC[1] && aC[0] == bP[0] && aC[1] == bP[1])
+			{
+				a[i][0] = b[j == 2 ? 0 : j + 1][0];
+				a[i][1] = b[j == 2 ? 0 : j + 1][1];
+				a[i][2] = b[j == 2 ? 0 : j + 1][2];
+
+				b[j][0] = a[i == 2 ? 0 : i + 1][0];
+				b[j][1] = a[i == 2 ? 0 : i + 1][1];
+				b[j][2] = a[i == 2 ? 0 : i + 1][2];
+				return true;
+			}
+			bP = b[j];
+		}
+		aP = a[i];
+	}
+	return false;
+}
+
+static void add_slice_offset(PolySet *ps, PolySet *edgePs, Polygon2d *slice, double h1, double h2)
+{
+	auto cps = new PolySet(3, ps->convexValue());
+	// Loop through each polygon of the edge, detect if the edge maps to bottom or top slice
+	for (auto &polygon : edgePs->polygons) {
+		cps->append_poly();
+		for (auto p : polygon) {
+			bool did_add = false;
+			for (const auto &o1 : slice->outlines()) {
+				for (auto v1 : o1.vertices) {
+					if (p[0] == v1[0] && p[1] == v1[1]) {
+						cps->append_vertex(p[0], p[1], h1);
+						did_add = true;
+					}
+				}
+			}
+			if (!did_add)
+				cps->append_vertex(p[0], p[1], h2);
+		}
+	}
+
+	// find all flat triangles
+	std::list<unsigned long> flat_offsets;
+	for (unsigned long i = 0; i < cps->polygons.size(); i++) {
+		if (is_poly_flat(cps->polygons[i])) {
+			flat_offsets.push_back(i);
+		}
+	}
+
+	// if there are any flat triangles, loop through and rotate
+	bool did_rotate = !flat_offsets.empty();
+	while (did_rotate) {
+		did_rotate = false;
+		for (auto i = flat_offsets.begin(); i != flat_offsets.end() && !did_rotate; i++) {
+			auto &flat = cps->polygons[*i];
+			// find a non-flat triangle which shares an edge and rotate those triangles
+			// this may not always create a pretty result, but it does a decent job
+			for (auto side = cps->polygons.begin(); side != cps->polygons.end() && !did_rotate; side++)
+			{
+				if (!is_poly_flat(*side) && rotate_shared_edge(flat, *side))
+				{
+					did_rotate = true;
+					flat_offsets.erase(i);
+				}
+			}
+		}
+	}
+	flat_offsets.clear();
+	ps->append(*cps);
+	delete cps;
+}
+
+static Geometry *extrudePolygon(const OffsetExtrudeNode &node, const Polygon2d &poly)
+{
+	auto *ps = new PolySet(3, boost::tribool(poly.is_convex()));
+	ps->setConvexity(node.convexity);
+
+	double h1, h2;
+
+	if (node.center) {
+		h1 = -node.height/2.0;
+		h2 = +node.height/2.0;
+	} else {
+		h1 = 0;
+		h2 = node.height;
+	}
+
+	PolySet *ps_bottom = poly.tessellate(); // bottom
+	// Flip vertex ordering for bottom polygon
+	for (auto &p : ps_bottom->polygons) {
+		std::reverse(p.begin(), p.end());
+	}
+	translate_PolySet(*ps_bottom, Vector3d(0,0,h1));
+	ps->append(*ps_bottom);
+	delete ps_bottom;
+
+	if (node.delta == 0) {
+		for (int j = 0; j < node.slices; j++) {
+			double height1 = h1 + (h2-h1)*j / node.slices;
+			double height2 = h1 + (h2-h1)*(j+1) / node.slices;
+			Vector2d scale1(1,1);
+			add_slice(ps, poly, 0, 0, height1, height2, scale1, scale1);
+		}
+		PolySet *ps_top = poly.tessellate();
+		translate_PolySet(*ps_top, Vector3d(0,0,h2));
+		ps->append(*ps_top);
+		delete ps_top;
+	} else {
+		ClipperLib::JoinType join_type = node.join_type;
+		double miter_limit = node.miter_limit;
+		bool outwards = node.delta > 0;
+		double offset_per_slice = node.delta / node.slices;
+		double h1_size = h1;
+		double height_increment = (h2 - h1) / node.slices;
+		double num_fragments = Calc::get_fragments_from_r(std::abs(node.delta), node.fn, node.fs, node.fa);
+		double arc_tolerance = std::abs(node.delta) * (1 - cos(G_PI / num_fragments));
+
+		for (int i = 0; i < node.slices; i++) {
+			auto *last_slice = ClipperUtils::applyOffset(poly, offset_per_slice * i, join_type, miter_limit, arc_tolerance);
+			auto *next_slice = ClipperUtils::applyOffset(poly, offset_per_slice * (i + 1), join_type, miter_limit, arc_tolerance);
+			auto *clipped_slice = outwards ? difference_polygons(next_slice, last_slice) : difference_polygons(last_slice, next_slice);
+			auto *clipped_polys = clipped_slice->tessellate();
+
+			if (outwards) {
+				for(auto &p : clipped_polys->polygons) {
+					std::reverse(p.begin(), p.end());
+				}
+				add_slice_offset(ps, clipped_polys, last_slice, h1_size, h1_size + height_increment);
+			} else {
+				add_slice_offset(ps, clipped_polys, next_slice, h1_size + height_increment, h1_size);
+			}
+
+			// top layer
+			if (i == node.slices - 1) {
+				PolySet *ps_top = next_slice->tessellate();
+				translate_PolySet(*ps_top, Vector3d(0,0, h2));
+				ps->append(*ps_top);
+				delete ps_top;
+			} else {
+				h1_size = h1_size + height_increment;
+			}
+
+			delete clipped_slice;
+			delete clipped_polys;
+			delete next_slice;
+			delete last_slice;
+		}
+	}
+
+	if (node.height < 0) {
+		for (auto &p : ps->polygons) {
+			std::reverse(p.begin(), p.end());
+		}
+	}
+	return ps;
+}
+
+Response GeometryEvaluator::visit(State &state, const OffsetExtrudeNode &node)
+{
+	if (state.isPrefix() && isSmartCached(node)) return Response::PruneTraversal;
+	if (state.isPostfix()) {
+		shared_ptr<const Geometry> geom;
+		if (!isSmartCached(node)) {
+			const Geometry *geometry = applyToChildren2D(node, OpenSCADOperator::UNION);
+			if (geometry) {
+				auto *polygons = dynamic_cast<const Polygon2d*>(geometry);
+				Geometry *extruded = extrudePolygon(node, *polygons);
+				assert(extruded);
+				geom.reset(extruded);
+				delete geometry;
+			}
+		}
+		else {
+			geom = smartCacheGet(node, false);
+		}
+		addToParent(state, node, geom);
 	}
 	return Response::ContinueTraversal;
 }

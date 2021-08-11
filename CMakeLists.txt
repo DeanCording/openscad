@@ -548,6 +548,7 @@ set(CORE_SOURCES
   src/value.cc
   src/version.cc
   src/Assignment.cc
+  src/offsetextrude.cc
   src/AST.cc
   src/Camera.cc
   src/CSGTreeNormalizer.cc
