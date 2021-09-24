@@ -154,12 +154,12 @@ endmacro(find_graphics)
 #   because it looks for Boost itself, so it has to be called
 #   before we look for our own required boost libraries.
 set(CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE TRUE)
-find_package(CGAL REQUIRED)
+find_package(CGAL REQUIRED COMPONENTS Core)
 message(STATUS "CGAL: ${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}")
 add_definitions(-DENABLE_CGAL)
 if(TARGET CGAL::CGAL)
-  list(APPEND COMMON_LIBRARIES CGAL::CGAL)
-  message(STATUS "CGAL: Using target CGAL::CGAL")
+  list(APPEND COMMON_LIBRARIES CGAL::CGAL CGAL::CGAL_Core)
+  message(STATUS "CGAL: Using target CGAL::CGAL CGAL::CGAL_Core")
 else()
   list(APPEND COMMON_LIBRARIES ${CGAL_LIBRARY})
   list(APPEND COMMON_LIBRARIES ${GMP_LIBRARIES})
@@ -311,11 +311,15 @@ find_package(BISON REQUIRED QUIET)
 message(STATUS "Bison: ${BISON_VERSION}")
 
 if(NOT MSVC)
-  find_package(Lib3MF REQUIRED QUIET)
-  message(STATUS "lib3mf: ${LIB3MF_VERSION}")
-  add_definitions(${LIB3MF_CFLAGS})
-  include_directories(${LIB3MF_INCLUDE_DIRS})
-  list(APPEND COMMON_LIBRARIES ${LIB3MF_LIBRARIES})
+  find_package(Lib3MF QUIET)
+  if (LIB3MF_FOUND)
+    message(STATUS "lib3mf: ${LIB3MF_VERSION}")
+    add_definitions(${LIB3MF_CFLAGS})
+    include_directories(${LIB3MF_INCLUDE_DIRS})
+    list(APPEND COMMON_LIBRARIES ${LIB3MF_LIBRARIES})
+  else()
+    message(STATUS "lib3mf: disabled")
+  endif()
 endif()
 
 # Use clang-tidy if run with -DCLANG_TIDY=1
@@ -475,6 +479,7 @@ elseif(WIN32)
 endif()
 
 include_directories("src/ext/libtess2/Include")
+include_directories("src/ext/json")
 
 # NOTE: To keep HEADLESS builds working, do NOT add Qt-dependent sources here,
 #       see GUI_SOURCES list below for that.
@@ -501,14 +506,17 @@ set(CORE_SOURCES
   src/dxfdata.cc
   src/dxfdim.cc
   src/evaluationsession.cc
+  src/IndexedMesh.cc
   src/export.cc
   src/export_3mf.cc
   src/export_amf.cc
   src/export_dxf.cc
   src/export_off.cc
+  src/export_wrl.cc
   src/export_pdf.cc
   src/export_stl.cc
   src/export_svg.cc
+  src/export_param.cc
   src/expr.cc
   src/feature.cc
   src/fileutils.cc
@@ -540,6 +548,9 @@ set(CORE_SOURCES
   src/projection.cc
   src/render.cc
   src/rendersettings.cc
+  src/roof.cc
+  src/roof_ss.cc
+  src/roof_vd.cc
   src/rotateextrude.cc
   src/stackcheck.h
   src/surface.cc

@@ -26,6 +26,7 @@ Feature::list_t Feature::feature_list;  // Double-listed values. --^
  * (well-defined) order of object construction, matching the order of the
  * const Features listed below.
  */
+const Feature Feature::ExperimentalRoof("roof", "Enable <code>roof</code>");
 const Feature Feature::ExperimentalInputDriverDBus("input-driver-dbus", "Enable DBus input drivers (requires restart)");
 const Feature Feature::ExperimentalLazyUnion("lazy-union", "Enable lazy unions.");
 const Feature Feature::ExperimentalVxORenderers("vertex-object-renderers", "Enable vertex object renderers");
@@ -77,6 +78,13 @@ void Feature::enable_feature(const std::string &feature_name, bool status)
 		it->second->enable(status);
 	} else {
 		LOG(message_group::Warning,Location::NONE,"","Ignoring request to enable unknown feature '%1$s'.",feature_name);
+	}
+}
+
+void Feature::enable_all(bool status)
+{
+	for (const auto& f : boost::make_iterator_range(Feature::begin(), Feature::end())) {
+		f->enable(status);
 	}
 }
 
