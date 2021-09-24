@@ -14,6 +14,7 @@ public:
 	typedef std::vector<Feature *> list_t;
 	typedef list_t::iterator iterator;
 
+	static const Feature ExperimentalRoof;
 	static const Feature ExperimentalInputDriverDBus;
 	static const Feature ExperimentalLazyUnion;
 	static const Feature ExperimentalVxORenderers;
@@ -33,6 +34,7 @@ public:
 
 	static std::string features();
 	static void enable_feature(const std::string &feature_name, bool status = true);
+	static void enable_all(bool status = true);
 
 private:
 	bool enabled;

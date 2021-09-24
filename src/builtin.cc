@@ -57,6 +57,7 @@ extern void register_builtin_offset();
 extern void register_builtin_dxf_linear_extrude();
 extern void register_builtin_dxf_rotate_extrude();
 extern void register_builtin_offset_extrude();
+extern void register_builtin_roof();
 extern void register_builtin_text();
 extern void initialize_builtin_dxf_dim();
 
@@ -85,7 +86,11 @@ void Builtins::initialize()
 	register_builtin_offset();
 	register_builtin_dxf_linear_extrude();
 	register_builtin_dxf_rotate_extrude();
+<<<<<<< HEAD
 	register_builtin_offset_extrude();
+=======
+	register_builtin_roof();
+>>>>>>> 81ec08312141647dea7ca995cf3ef8341ca70ce3
 	register_builtin_text();
 
 	this->deprecations.emplace("dxf_linear_extrude", "linear_extrude()");

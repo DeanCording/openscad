@@ -10,6 +10,9 @@
 #include "transformnode.h"
 #include "linearextrudenode.h"
 #include "offsetextrudenode.h"
+#include "roofnode.h"
+#include "roof_ss.h"
+#include "roof_vd.h"
 #include "rotateextrudenode.h"
 #include "csgnode.h"
 #include "cgaladvnode.h"
@@ -1598,6 +1601,7 @@ Response GeometryEvaluator::visit(State &state, const AbstractIntersectionNode &
 	return Response::ContinueTraversal;
 }
 
+<<<<<<< HEAD
 Polygon2d * difference_polygons(Polygon2d *outer, Polygon2d *inner)
 {
 	std::vector<const Polygon2d *> children;
@@ -1780,6 +1784,25 @@ static Geometry *extrudePolygon(const OffsetExtrudeNode &node, const Polygon2d &
 }
 
 Response GeometryEvaluator::visit(State &state, const OffsetExtrudeNode &node)
+=======
+static Geometry *roofOverPolygon(const RoofNode &node, const Polygon2d &poly)
+{
+	PolySet *roof;
+	if (node.method == "voronoi") {
+		roof = roof_vd::voronoi_diagram_roof(poly, node.fa, node.fs);
+	} else if (node.method == "straight") {
+		roof = roof_ss::straight_skeleton_roof(poly);
+	} else {
+		assert(false && "Invalid roof method");
+	}
+
+	roof->setConvexity(node.convexity);
+
+	return roof;
+}
+
+Response GeometryEvaluator::visit(State &state, const RoofNode &node)
+>>>>>>> 81ec08312141647dea7ca995cf3ef8341ca70ce3
 {
 	if (state.isPrefix() && isSmartCached(node)) return Response::PruneTraversal;
 	if (state.isPostfix()) {
@@ -1788,9 +1811,22 @@ Response GeometryEvaluator::visit(State &state, const OffsetExtrudeNode &node)
 			const Geometry *geometry = applyToChildren2D(node, OpenSCADOperator::UNION);
 			if (geometry) {
 				auto *polygons = dynamic_cast<const Polygon2d*>(geometry);
+<<<<<<< HEAD
 				Geometry *extruded = extrudePolygon(node, *polygons);
 				assert(extruded);
 				geom.reset(extruded);
+=======
+				Geometry *roof;
+				try {
+					roof = roofOverPolygon(node, *polygons);
+				} catch (RoofNode::roof_exception &e) {
+					LOG(message_group::Error,node.modinst->location(),this->tree.getDocumentPath(),
+							"Skeleton computation error. " + e.message());
+					roof = new PolySet(3);
+				}
+				assert(roof);
+				geom.reset(roof);
+>>>>>>> 81ec08312141647dea7ca995cf3ef8341ca70ce3
 				delete geometry;
 			}
 		}

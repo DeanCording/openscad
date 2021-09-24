@@ -48,7 +48,6 @@
 #include "AboutDialog.h"
 #include "FontListDialog.h"
 #include "LibraryInfoDialog.h"
-#include "RenderStatistic.h"
 #include "ScintillaEditor.h"
 #ifdef ENABLE_OPENCSG
 #include "CSGTreeEvaluator.h"
@@ -392,6 +391,7 @@ MainWindow::MainWindow(const QStringList &filenames)
 	connect(this->fileActionExportSTL, SIGNAL(triggered()), this, SLOT(actionExportSTL()));
 	connect(this->fileActionExport3MF, SIGNAL(triggered()), this, SLOT(actionExport3MF()));
 	connect(this->fileActionExportOFF, SIGNAL(triggered()), this, SLOT(actionExportOFF()));
+	connect(this->fileActionExportWRL, SIGNAL(triggered()), this, SLOT(actionExportWRL()));
 	connect(this->fileActionExportAMF, SIGNAL(triggered()), this, SLOT(actionExportAMF()));
 	connect(this->fileActionExportDXF, SIGNAL(triggered()), this, SLOT(actionExportDXF()));
 	connect(this->fileActionExportSVG, SIGNAL(triggered()), this, SLOT(actionExportSVG()));
@@ -553,6 +553,7 @@ MainWindow::MainWindow(const QStringList &filenames)
 	initActionIcon(fileActionExportAMF, ":/resources/icons/svg-default/export-amf.svg", ":/resources/icons/svg-default/export-amf-white.svg");
 	initActionIcon(fileActionExport3MF, ":/resources/icons/svg-default/export-3mf.svg", ":/resources/icons/svg-default/export-3mf-white.svg");
 	initActionIcon(fileActionExportOFF, ":/resources/icons/svg-default/export-off.svg", ":/resources/icons/svg-default/export-off-white.svg");
+	initActionIcon(fileActionExportWRL, ":/resources/icons/svg-default/export-wrl.svg", ":/resources/icons/svg-default/export-wrl-white.svg");
 	initActionIcon(fileActionExportDXF, ":/resources/icons/svg-default/export-dxf.svg", ":/resources/icons/svg-default/export-dxf-white.svg");
 	initActionIcon(fileActionExportSVG, ":/resources/icons/svg-default/export-svg.svg", ":/resources/icons/svg-default/export-svg-white.svg");
 	initActionIcon(fileActionExportCSG, ":/resources/icons/svg-default/export-csg.svg", ":/resources/icons/svg-default/export-csg-white.svg");
@@ -998,7 +999,7 @@ void MainWindow::compile(bool reload, bool forcedone)
 		compileErrors = 0;
 		compileWarnings = 0;
 
-		this->renderingTime.start();
+		this->renderStatistic.start();
 
 		// Reload checks the timestamp of the toplevel file and refreshes if necessary,
 		if (reload) {
@@ -1262,7 +1263,7 @@ void MainWindow::compileCSG()
 			this->processEvents();
 			this->csgRoot = csgrenderer.buildCSGTree(*root_node);
 #endif
-			RenderStatistic::printCacheStatistic();
+			renderStatistic.printCacheStatistic();
 			this->processEvents();
 		}
 		catch (const ProgressCancelException &) {
@@ -1345,8 +1346,7 @@ void MainWindow::compileCSG()
 																														this->highlights_products,
 																														this->background_products);
 		LOG(message_group::None,Location::NONE,"","Compile and preview finished.");
-		std::chrono::milliseconds ms{this->renderingTime.elapsed()};
-		RenderStatistic::printRenderingTime(ms);
+		renderStatistic.printRenderingTime();
 		this->processEvents();
 	}catch(const HardWarningException&){
 		exceptionCleanup();
@@ -2131,13 +2131,18 @@ void MainWindow::cgalRender()
 void MainWindow::actionRenderDone(shared_ptr<const Geometry> root_geom)
 {
 	progress_report_fin();
-	std::chrono::milliseconds ms{this->renderingTime.elapsed()};
-	RenderStatistic::printCacheStatistic();
-	RenderStatistic::printRenderingTime(ms);
 	if (root_geom) {
-		if (!root_geom->isEmpty()) {
-			RenderStatistic().print(*root_geom);
+		std::vector<std::string> options;
+		if (Settings::Settings::summaryCamera.value()) {
+			options.push_back(RenderStatistic::CAMERA);
 		}
+		if (Settings::Settings::summaryArea.value()) {
+			options.push_back(RenderStatistic::AREA);
+		}
+		if (Settings::Settings::summaryBoundingBox.value()) {
+			options.push_back(RenderStatistic::BOUNDING_BOX);
+		}
+		renderStatistic.printAll(root_geom, qglview->cam, options);
 		LOG(message_group::None,Location::NONE,"","Rendering finished.");
 
 		this->root_geom = root_geom;
@@ -2152,8 +2157,9 @@ void MainWindow::actionRenderDone(shared_ptr<const Geometry> root_geom)
 
 	updateStatusBar(nullptr);
 
-	if (Preferences::inst()->getValue("advanced/enableSoundNotification").toBool() &&
-		Preferences::inst()->getValue("advanced/timeThresholdOnRenderCompleteSound").toUInt() <= ms.count()/1000)
+	const bool renderSoundEnabled = Preferences::inst()->getValue("advanced/enableSoundNotification").toBool();
+	const uint soundThreshold = Preferences::inst()->getValue("advanced/timeThresholdOnRenderCompleteSound").toUInt();
+	if (renderSoundEnabled && soundThreshold <= renderStatistic.ms().count() / 1000)
 	{
 		QSound::play(":sounds/complete.wav");
 	}
@@ -2505,6 +2511,11 @@ void MainWindow::actionExport3MF()
 void MainWindow::actionExportOFF()
 {
 	actionExport(FileFormat::OFF, "OFF", ".off", 3);
+}
+
+void MainWindow::actionExportWRL()
+{
+	actionExport(FileFormat::WRL, "WRL", ".wrl", 3);
 }
 
 void MainWindow::actionExportAMF()
