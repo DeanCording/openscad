@@ -1601,7 +1601,6 @@ Response GeometryEvaluator::visit(State &state, const AbstractIntersectionNode &
 	return Response::ContinueTraversal;
 }
 
-<<<<<<< HEAD
 Polygon2d * difference_polygons(Polygon2d *outer, Polygon2d *inner)
 {
 	std::vector<const Polygon2d *> children;
@@ -1784,7 +1783,28 @@ static Geometry *extrudePolygon(const OffsetExtrudeNode &node, const Polygon2d &
 }
 
 Response GeometryEvaluator::visit(State &state, const OffsetExtrudeNode &node)
-=======
+{
+	if (state.isPrefix() && isSmartCached(node)) return Response::PruneTraversal;
+	if (state.isPostfix()) {
+		shared_ptr<const Geometry> geom;
+		if (!isSmartCached(node)) {
+			const Geometry *geometry = applyToChildren2D(node, OpenSCADOperator::UNION);
+			if (geometry) {
+				auto *polygons = dynamic_cast<const Polygon2d*>(geometry);
+				Geometry *extruded = extrudePolygon(node, *polygons);
+				assert(extruded);
+				geom.reset(extruded);
+				delete geometry;
+			}
+		}
+		else {
+			geom = smartCacheGet(node, false);
+		}
+		addToParent(state, node, geom);
+	}
+	return Response::ContinueTraversal;
+}
+
 static Geometry *roofOverPolygon(const RoofNode &node, const Polygon2d &poly)
 {
 	PolySet *roof;
@@ -1802,7 +1822,6 @@ static Geometry *roofOverPolygon(const RoofNode &node, const Polygon2d &poly)
 }
 
 Response GeometryEvaluator::visit(State &state, const RoofNode &node)
->>>>>>> 81ec08312141647dea7ca995cf3ef8341ca70ce3
 {
 	if (state.isPrefix() && isSmartCached(node)) return Response::PruneTraversal;
 	if (state.isPostfix()) {
@@ -1811,11 +1830,6 @@ Response GeometryEvaluator::visit(State &state, const RoofNode &node)
 			const Geometry *geometry = applyToChildren2D(node, OpenSCADOperator::UNION);
 			if (geometry) {
 				auto *polygons = dynamic_cast<const Polygon2d*>(geometry);
-<<<<<<< HEAD
-				Geometry *extruded = extrudePolygon(node, *polygons);
-				assert(extruded);
-				geom.reset(extruded);
-=======
 				Geometry *roof;
 				try {
 					roof = roofOverPolygon(node, *polygons);
@@ -1826,7 +1840,6 @@ Response GeometryEvaluator::visit(State &state, const RoofNode &node)
 				}
 				assert(roof);
 				geom.reset(roof);
->>>>>>> 81ec08312141647dea7ca995cf3ef8341ca70ce3
 				delete geometry;
 			}
 		}
