@@ -166,8 +166,15 @@ build_qt5()
   v=(${version//./ }) # Split into array
   rm -rf qt-everywhere-opensource-src-$version
   if [ ! -f qt-everywhere-opensource-src-$version.tar.xz ]; then
-      curl -LO http://download.qt.io/official_releases/qt/${v[0]}.${v[1]}/$version/single/qt-everywhere-opensource-src-$version.tar.xz
+    curl -LO http://download.qt.io/official_releases/qt/${v[0]}.${v[1]}/$version/single/qt-everywhere-opensource-src-$version.tar.xz
   fi
+  set +e
+  tar xzf qt-everywhere-opensource-src-$version.tar.xz
+  if [ $? != 0 ]; then
+    rm -f qt-everywhere-opensource-src-$version.tar.xz
+    curl -LO http://download.qt.io/archive/qt/${v[0]}.${v[1]}/$version/single/qt-everywhere-opensource-src-$version.tar.xz
+  fi
+  set -e
   tar xzf qt-everywhere-opensource-src-$version.tar.xz
   cd qt-everywhere-opensource-src-$version
   patch -p1 < $OPENSCADDIR/patches/qt5/qt-5.9.7-macos.patch
