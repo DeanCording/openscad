@@ -42,7 +42,7 @@ PACKAGES=(
     "libzip 1.5.1"
     "libxml2 2.9.9"
     "fontconfig 2.13.1"
-    "hidapi 0.9.0"
+    "hidapi 0.11.0"
     "libuuid 1.6.2"
     "lib3mf 1.8.1"
     "glib2 2.56.3"
@@ -755,8 +755,13 @@ done
 
 OPTION_PACKAGES="${@:$OPTIND}"
 
+OSX_MAJOR_VERSION=`sw_vers -productVersion | cut -d. -f1`
 OSX_VERSION=`sw_vers -productVersion | cut -d. -f2`
-if (( $OSX_VERSION >= 14 )); then
+if (( $OSX_MAJOR_VERSION >= 11 )); then
+  echo "Detected BigSur (11.x) or later"
+elif (( $OSX_VERSION >= 15 )); then
+  echo "Detected Catalina (10.15) or later"
+elif (( $OSX_VERSION >= 14 )); then
   echo "Detected Mojave (10.14) or later"
 elif (( $OSX_VERSION >= 13 )); then
   echo "Detected High Sierra (10.13) or later"
