@@ -1,0 +1,2267 @@
+# #-#-#-#-#  openscad-tmp.pot (OpenSCAD 2021.05.24)  #-#-#-#-#
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the OpenSCAD package.
+# Serkan ÖNDER <serkanonder@outlook.com>, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-03-05 18:18-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Serkan ÖNDER <serkanonder@outlook.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.3\n"
+
+#: build/OpenSCAD_autogen/include/ui_AboutDialog.h:100 src/gui/AboutDialog.h:13
+msgid "About OpenSCAD"
+msgstr "OpenSCAD Hakkında"
+
+#: build/OpenSCAD_autogen/include/ui_AboutDialog.h:102
+#: build/OpenSCAD_autogen/include/ui_LaunchingScreen.h:306
+msgid ""
+"<html><head/><body>\n"
+"<p style=\"font-family: 'Open Sans', 'Droid Sans', 'sans-serif'; font-"
+"weight: bold; padding-bottom: 0; margin-bottom: 0; font-size: 22pt;\"><span "
+"style=\"color: green;\">Open</span>SCAD</p>\n"
+"<p style=\"font-family: 'Open Sans', 'Droid Sans', 'sans-serif'; font-"
+"weight: normal; font-size: 14pt; padding-top: 0; margin-top: 0; margin-left: "
+"2em;\">The Programmers Solid 3D CAD Modeller</p>\n"
+"</body></html>\n"
+"\n"
+"\n"
+msgstr ""
+"<html><head/><body>\n"
+"<p style=\"font-family: 'Open Sans', 'Droid Sans', 'sans-serif'; font-"
+"weight: bold; padding-bottom: 0; margin-bottom: 0; font-size: 22pt;\"><span "
+"style=\"color: green;\">AÇ</span>SCAD</p>\n"
+"<p style=\"font-family: 'Open Sans', 'Droid Sans', 'sans-serif'; font-"
+"weight: normal; font-size: 14pt; padding-top: 0; margin-top: 0; margin-left: "
+"2em;\">Programcılar Katı 3B CAD Modelleyici</p>\n"
+"</body></html>\n"
+"\n"
+"\n"
+
+#: build/OpenSCAD_autogen/include/ui_AboutDialog.h:109
+msgid "OK"
+msgstr "TAMAM"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:853
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:362
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1773
+msgid "Preferences"
+msgstr "Tercihler"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:854
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:855
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:859
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:863
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:865
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:867
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:869
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:871
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:882
+msgid "Trim"
+msgstr "Trim"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:856
+msgid "Reset Trim"
+msgstr "Trim'i Sıfırla"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:857
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:860
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:861
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:862
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:864
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:866
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:868
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:870
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:881
+msgid "DeadZone"
+msgstr "ÖlüBölge"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:858
+msgid "Auto Trim Axes"
+msgstr "Otomatik Trim Eksenleri"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:872
+msgid "Axis 2"
+msgstr "Eksen 2"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:873
+msgid "Axis 0"
+msgstr "Eksen 0"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:874
+msgid "Axis 3"
+msgstr "Eksen 3"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:875
+msgid "Axis 6"
+msgstr "Eksen 6"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:876
+msgid "Axis 8"
+msgstr "Eksen 8"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:877
+msgid "Axis 7"
+msgstr "Eksen 7"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:878
+msgid "Axis 5"
+msgstr "Eksen 5"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:879
+msgid "Axis 1"
+msgstr "Eksen 1"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:880
+msgid "Axis 4"
+msgstr "Eksen 4"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:883
+msgid "Rotation"
+msgstr "Döndürme"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:884
+msgid "Zoom"
+msgstr "Yakınlaştır"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:885
+msgid "X"
+msgstr "X"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:886
+msgid "Gain"
+msgstr "Kazanç"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:887
+msgid "Y"
+msgstr "Y"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:888
+msgid "Z"
+msgstr "Z"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:889
+msgid "Translation"
+msgstr "Çeviri"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:890
+msgid "ViewPort rel.<br/>Translation"
+msgstr "BağlantıNoktasını Görüntüle<br/>Çeviri"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:891
+msgid "ViewPort rel.<br />Rotation"
+msgstr "BağlantıNoktasını Görüntüle.<br />Döndürme"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:892
+msgid "Axis Setup:"
+msgstr "Eksen Kurulumu:"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:893
+msgid "<b>Driver selection:</b> <i>(changes requires restarting OpenSCAD)</i>"
+msgstr ""
+"<b>Sürücü seçimi:</b> <i>(değişiklikler OpenSCAD'in yeniden başlatılmasını "
+"gerektirir)</i>"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:894
+msgid "SpaceNav"
+msgstr "BoşlukGezin"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:895
+msgid "HIDAPI"
+msgstr "HIDAPI"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:896
+msgid "QGamepad"
+msgstr "QOyun Kumandası"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:897
+msgid "Joystick"
+msgstr "Oyun kolu"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:898
+msgid "DBus"
+msgstr "VYolu"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:899
+msgid "Axes Mapping:"
+msgstr "Eksen Haritalama:"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:900
+msgid "Status:"
+msgstr "Durum:"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:901
+msgid "TextLabel"
+msgstr "MetinEtiketi"
+
+#: build/OpenSCAD_autogen/include/ui_AxisConfigWidget.h:902
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1777
+msgid "Update"
+msgstr "Güncelle"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:363
+#, fuzzy
+msgid "Button 19"
+msgstr "Düğme 1"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:364
+msgid "Button 5"
+msgstr "Düğme 5"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:365
+msgid "Button 14"
+msgstr "Düğme 14"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:366
+msgid "Button 7"
+msgstr "Düğme 7"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:367
+#, fuzzy
+msgid "Button 16"
+msgstr "Düğme 1"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:368
+#, fuzzy
+msgid "Button 20"
+msgstr "Düğme 2"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:369
+msgid "Button 1"
+msgstr "Düğme 1"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:370
+#, fuzzy
+msgid "Button 21"
+msgstr "Düğme 2"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:371
+#, fuzzy
+msgid "Button 18"
+msgstr "Düğme 1"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:372
+msgid "Button 0"
+msgstr "Düğme 0"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:373
+msgid "Button 4"
+msgstr "Düğme 4"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:374
+msgid "Button 10"
+msgstr "Düğme 10"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:375
+msgid "Button 6"
+msgstr "Düğme 6"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:376
+msgid "Button 8"
+msgstr "Düğme 8"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:377
+msgid "Button 15"
+msgstr "Düğme 15"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:378
+msgid "Button 11"
+msgstr "Düğme 11"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:379
+msgid "Button 3"
+msgstr "Düğme 3"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:380
+#, fuzzy
+msgid "Button 23"
+msgstr "Düğme 2"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:381
+msgid "Button 9"
+msgstr "Düğme 9"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:382
+msgid "Button 2"
+msgstr "Düğme 2"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:383
+msgid "Button 13"
+msgstr "Düğme 13"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:384
+msgid "Button 12"
+msgstr "Düğme 12"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:385
+#, fuzzy
+msgid "Button 17"
+msgstr "Düğme 1"
+
+#: build/OpenSCAD_autogen/include/ui_ButtonConfigWidget.h:386
+#, fuzzy
+msgid "Button 22"
+msgstr "Düğme 2"
+
+#: build/OpenSCAD_autogen/include/ui_Console.h:42
+msgid "Clear"
+msgstr "Temizle"
+
+#: build/OpenSCAD_autogen/include/ui_Console.h:44
+msgid "Clear console"
+msgstr "Konsolü temizle"
+
+#: build/OpenSCAD_autogen/include/ui_Console.h:46
+msgid "Save As..."
+msgstr "Farklı Kaydet..."
+
+#: build/OpenSCAD_autogen/include/ui_Console.h:48
+msgid "Save console content to file"
+msgstr "Konsol içeriğini dosyaya kaydet"
+
+#: build/OpenSCAD_autogen/include/ui_ErrorLog.h:93
+msgid "Error Log"
+msgstr "Hata Günlüğü"
+
+#: build/OpenSCAD_autogen/include/ui_ErrorLog.h:94
+msgid "RowSelected"
+msgstr "SatırSeçili"
+
+#: build/OpenSCAD_autogen/include/ui_ErrorLog.h:96
+msgid "Return"
+msgstr "Geri dön"
+
+#: build/OpenSCAD_autogen/include/ui_ErrorLog.h:98
+msgid "&Show"
+msgstr "&Göster"
+
+#: build/OpenSCAD_autogen/include/ui_ErrorLog.h:99
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1222
+msgid "All"
+msgstr "Tümü"
+
+#: build/OpenSCAD_autogen/include/ui_ErrorLog.h:100
+msgid "ERROR"
+msgstr "HATA"
+
+#: build/OpenSCAD_autogen/include/ui_ErrorLog.h:101
+msgid "WARNING"
+msgstr "UYARI"
+
+#: build/OpenSCAD_autogen/include/ui_ErrorLog.h:102
+msgid "UI-WARNING"
+msgstr "ARAYÜZ-UYARISI"
+
+#: build/OpenSCAD_autogen/include/ui_ErrorLog.h:103
+msgid "FONT-WARNING"
+msgstr "YAZI TİPİ-UYARISI"
+
+#: build/OpenSCAD_autogen/include/ui_ErrorLog.h:104
+msgid "EXPORT-WARNING"
+msgstr "DIŞA AKTARMA-UYARISI"
+
+#: build/OpenSCAD_autogen/include/ui_ErrorLog.h:105
+msgid "EXPORT-ERROR"
+msgstr "DIŞA AKTARMA-HATASI"
+
+#: build/OpenSCAD_autogen/include/ui_ErrorLog.h:106
+msgid "TRACE"
+msgstr "İZ"
+
+#: build/OpenSCAD_autogen/include/ui_ErrorLog.h:107
+msgid "DEPRECATED"
+msgstr "KULLANIMDAN KALDIRILMIŞ"
+
+#: build/OpenSCAD_autogen/include/ui_FontListDialog.h:103
+msgid "OpenSCAD Font List"
+msgstr "OpenSCAD Yazı Tipi Listesi"
+
+#: build/OpenSCAD_autogen/include/ui_FontListDialog.h:104
+#: build/OpenSCAD_autogen/include/ui_LibraryInfoDialog.h:74
+#: build/OpenSCAD_autogen/include/ui_PrintInitDialog.h:110
+msgid "&OK"
+msgstr "&Tamam"
+
+#: build/OpenSCAD_autogen/include/ui_FontListDialog.h:105
+msgid "Copy to Clipboard"
+msgstr "Panoya Kopyala"
+
+#: build/OpenSCAD_autogen/include/ui_FontListDialog.h:106
+msgid "Filter:"
+msgstr "Filtre:"
+
+#: build/OpenSCAD_autogen/include/ui_FontListDialog.h:107
+msgid ""
+"<html><head/><body><p>This list shows the fonts currently registered with "
+"OpenSCAD.</p><p>Example:</p><pre style=\" margin-top:12px; margin-"
+"bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-"
+"indent:0px;\"><span style=\" font-family:'Courier New,courier';\">  "
+"text(&quot;OpenSCAD&quot;, font = &quot;DejaVu Sans&quot;);</span></pre><pre "
+"style=\" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-"
+"right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-"
+"family:'Courier New,courier';\">  text(&quot;OpenSCAD&quot;, font = &quot;"
+"Liberation Sans:style=Italic&quot;);</span></pre></body></html>"
+msgstr ""
+"<html><head/><body><p>Bu liste, şu anda OpenSCAD'de kayıtlı olan yazı "
+"tiplerini gösterir.</p><p>Örnek:</p><pre style=\" margin-top:12px; margin-"
+"bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-"
+"indent:0px;\"><span style=\" font-family:'Courier New,courier';\">  "
+"metin(&quot;OpenSCAD&quot;, yazı tipi = &quot;DejaVu Sans&quot;);</span></"
+"pre><pre style=\" margin-top:0px; margin-bottom:12px; margin-left:0px; "
+"margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-"
+"family:'Courier New,courier';\">  metin(&quot;OpenSCAD&quot;, yazı tipi = "
+"&quot;Liberation Sans:biçim=Italic&quot;);</span></pre></body></html>"
+
+#: build/OpenSCAD_autogen/include/ui_LaunchingScreen.h:295
+msgid "Welcome to OpenSCAD"
+msgstr "OpenSCAD'e hoş geldiniz"
+
+#: build/OpenSCAD_autogen/include/ui_LaunchingScreen.h:296
+msgid "New"
+msgstr "Yeni"
+
+#: build/OpenSCAD_autogen/include/ui_LaunchingScreen.h:297
+msgid "Open"
+msgstr "Aç"
+
+#: build/OpenSCAD_autogen/include/ui_LaunchingScreen.h:298
+msgid "Help"
+msgstr "Yardım"
+
+#: build/OpenSCAD_autogen/include/ui_LaunchingScreen.h:299
+msgid "Recents"
+msgstr "Son bilgiler"
+
+#: build/OpenSCAD_autogen/include/ui_LaunchingScreen.h:300
+msgid "Open Recent"
+msgstr "Son Kullanılanları Aç"
+
+#: build/OpenSCAD_autogen/include/ui_LaunchingScreen.h:301
+#: build/OpenSCAD_autogen/include/ui_LaunchingScreen.h:303
+msgid "Examples"
+msgstr "Örnekler"
+
+#: build/OpenSCAD_autogen/include/ui_LaunchingScreen.h:304
+msgid "Open Example"
+msgstr "Örneği Aç"
+
+#: build/OpenSCAD_autogen/include/ui_LaunchingScreen.h:313
+msgid "Don't show again"
+msgstr "Bir daha gösterme"
+
+#: build/OpenSCAD_autogen/include/ui_LaunchingScreen.h:314
+msgid "Version"
+msgstr "Sürüm"
+
+#: build/OpenSCAD_autogen/include/ui_LibraryInfoDialog.h:72
+msgid "Lib & Build Info"
+msgstr "Lib & Derleme Bilgisi"
+
+#: build/OpenSCAD_autogen/include/ui_LibraryInfoDialog.h:73
+msgid "OpenSCAD Detailed Library and Build Information"
+msgstr "OpenSCAD Ayrıntılı Kitaplığı ve Yapı Bilgileri"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:920
+msgid "&New File"
+msgstr "&Yeni dosya"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:922
+msgid "Ctrl+N"
+msgstr "Ctrl+N"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:924
+msgid "New Window"
+msgstr "Yeni Pencere"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:925
+msgid "&Open File"
+msgstr "&Dosya Aç"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:927
+msgid "Ctrl+O"
+msgstr "Ctrl+O"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:929
+msgid "Open in New Window"
+msgstr "Yeni Pencerede Aç"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:930
+msgid "&Save"
+msgstr "&Kaydet"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:932
+msgid "Ctrl+S"
+msgstr "Ctrl+S"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:934
+msgid "Save &As..."
+msgstr "Farklı &Kaydet..."
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:936
+msgid "Ctrl+Shift+S"
+msgstr "Ctrl+Shift+S"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:938
+msgid "Save All"
+msgstr "Hepsini Kaydet"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:939
+msgid "&Reload"
+msgstr "&Tekrar yükle"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:941
+msgid "Ctrl+R"
+msgstr "Ctrl+R"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:943
+msgid "&Quit"
+msgstr "&Çık"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:945
+msgid "Ctrl+Q"
+msgstr "Ctrl+Q"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:947
+msgid "&Undo"
+msgstr "&Geri al"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:949
+msgid "Ctrl+Z"
+msgstr "Ctrl+Z"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:951
+msgid "&Redo"
+msgstr "&Yinele"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:953
+msgid "Ctrl+Shift+Z"
+msgstr "Ctrl+Shift+Z"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:956
+msgid "Ctrl+Y"
+msgstr "Ctrl+Y"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:958
+msgid "Cu&t"
+msgstr "Ke&s"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:960
+msgid "Ctrl+X"
+msgstr "Ctrl+X"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:962
+msgid "&Copy"
+msgstr "&Kopyala"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:964
+msgid "Ctrl+C"
+msgstr "Ctrl+C"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:966
+msgid "&Paste"
+msgstr "&Yapıştır"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:968
+msgid "Ctrl+V"
+msgstr "Ctrl+V"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:970
+msgid "&Indent"
+msgstr "&Girinti"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:972
+msgid "Ctrl+I"
+msgstr "Ctrl+I"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:974
+msgid "C&omment"
+msgstr "Y&orum"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:976
+msgid "Ctrl+D"
+msgstr "Ctrl+D"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:978
+msgid "Unco&mment"
+msgstr "Yoru&msuz"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:980
+msgid "Ctrl+Shift+D"
+msgstr "Ctrl+Shift+D"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:982
+msgid "Show Next Tab"
+msgstr "Sonraki Sekmeyi Göster"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:984
+msgid "Ctrl+Tab"
+msgstr "Ctrl+Tab"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:986
+msgid "Show Previous Tab"
+msgstr "Önceki Sekmeyi Göster"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:988
+msgid "Ctrl+Shift+Tab"
+msgstr "Ctrl+Shift+Tab"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:990
+msgid "Copy viewport ima&ge"
+msgstr "Görünüm alanı res&mini kopyala"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:992
+msgid "Ctrl+Shift+C"
+msgstr "Ctrl+Shift+C"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:994
+msgid "Copy viewport transl&ation"
+msgstr "Görünüm alanı çevir&isini kopyala"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:996
+msgid "Ctrl+T"
+msgstr "Ctrl+T"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:998
+msgid "Cop&y viewport rotation"
+msgstr "Görünüm alanı döndürmeyi kopy&ala"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:999
+msgid "Copy vie&wport distance"
+msgstr "Görün&üm alanı mesafesini kopyala"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1000
+msgid "Copy vie&wport fov"
+msgstr "Gör&ünüm alanını kopyala"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1001
+msgid "Increase Font &Size"
+msgstr "Yazı Tipi &Boyutunu Artır"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1003
+msgid "Ctrl++"
+msgstr "Ctrl++"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1005
+msgid "Decrease Font Si&ze"
+msgstr "Yazı Tipi Bo&yutunu Azalt"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1007
+msgid "Ctrl+-"
+msgstr "Ctrl+-"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1009
+msgid "Hide Editor"
+msgstr "Düzenleyiciyi Gizle"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1010
+msgid "&Reload and Preview"
+msgstr "&Yeniden Yükle ve Önizle"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1012
+msgid "F4"
+msgstr "F4"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1014
+msgid "&Preview"
+msgstr "Ön &izleme"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1016
+msgid "F5"
+msgstr "F5"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1018
+msgid "R&ender"
+msgstr "&İşle"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1020
+msgid "F6"
+msgstr "F6"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1022
+msgid "&3D Print"
+msgstr "&3B Yazıcı"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1024
+msgid "F8"
+msgstr "F8"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1026
+msgid "&Check Validity"
+msgstr "&Geçerliliği Kontrol Et"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1027
+msgid "Display A&ST..."
+msgstr "A&ST'yi göster..."
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1028
+msgid "Display CSG &Tree..."
+msgstr "CSG &Ağacını Görüntüle..."
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1029
+msgid "Display CSG Pr&oducts..."
+msgstr "CSG Ür&ünlerini Görüntüle..."
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1030
+msgid "Export as &STL..."
+msgstr "&STL olarak dışa aktar..."
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1032
+msgid "F7"
+msgstr "F7"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1034
+msgid "Export as &OFF..."
+msgstr "&KAPALI olarak dışa aktar..."
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1035
+#, fuzzy
+msgid "Export as &WRL..."
+msgstr "&STL olarak dışa aktar..."
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1036
+msgid "Preview"
+msgstr "Önizle"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1038
+msgid "F9"
+msgstr "F9"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1040
+msgid "Surfaces"
+msgstr "Yüzeyler"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1042
+msgid "F10"
+msgstr "F10"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1044
+msgid "Wireframe"
+msgstr "Tel kafes"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1046
+msgid "F11"
+msgstr "F11"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1048
+msgid "Thrown Together"
+msgstr "Birlikte Atılmış"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1050
+msgid "F12"
+msgstr "F12"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1052
+msgid "Show Edges"
+msgstr "Kenarları Göster"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1054
+msgid "Ctrl+1"
+msgstr "Ctrl+1"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1056
+msgid "Show Axes"
+msgstr "Eksenleri Göster"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1058
+msgid "Ctrl+2"
+msgstr "Ctrl+2"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1060
+msgid "Show Crosshairs"
+msgstr "Artı İşaretlerini Göster"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1062
+msgid "Ctrl+3"
+msgstr "Ctrl+3"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1064
+msgid "Show Scale Markers"
+msgstr "Ölçek İşaretlerini Göster"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1065
+msgid "Animate"
+msgstr "Canlandır"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1066
+msgid "&Top"
+msgstr "&Üst"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1068
+msgid "Ctrl+4"
+msgstr "Ctrl+4"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1070
+msgid "&Bottom"
+msgstr "&Alt"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1072
+msgid "Ctrl+5"
+msgstr "Ctrl+5"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1074
+msgid "&Left"
+msgstr "&Sol"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1076
+msgid "Ctrl+6"
+msgstr "Ctrl+6"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1078
+msgid "&Right"
+msgstr "&Sağ"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1080
+msgid "Ctrl+7"
+msgstr "Ctrl+7"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1082
+msgid "&Front"
+msgstr "&Ön"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1084
+msgid "Ctrl+8"
+msgstr "Ctrl+8"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1086
+msgid "Bac&k"
+msgstr "Ger&i"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1088
+msgid "Ctrl+9"
+msgstr "Ctrl+9"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1090
+msgid "&Diagonal"
+msgstr "&Diyagonal"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1092
+msgid "Ctrl+0"
+msgstr "Ctrl+0"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1094
+msgid "Ce&nter"
+msgstr "Me&rkez"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1096
+msgid "Ctrl+Shift+0"
+msgstr "Ctrl+Shift+0"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1098
+msgid "&Perspective"
+msgstr "&Perspektif"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1099
+msgid "&Orthogonal"
+msgstr "&Dikey"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1100
+msgid "Hide Console"
+msgstr "Konsolu Gizle"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1101
+msgid "&About"
+msgstr "&Hakkında"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1102
+msgid "&Documentation"
+msgstr "&Belgelendirme"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1103
+#, fuzzy
+msgid "&Offline Documentation"
+msgstr "&Belgelendirme"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1104
+#, fuzzy
+msgid "&Offline Cheat Sheet"
+msgstr "&Kopya Kağıdı"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1105
+msgid "Clear Recent"
+msgstr "Son öğeleri Temizle"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1106
+msgid "Export as &DXF..."
+msgstr "&DXF olarak dışa aktar..."
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1107
+msgid "&Close"
+msgstr "&Kapat"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1109
+msgid "Ctrl+W"
+msgstr "Ctrl+W"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1111
+msgid "&Preferences"
+msgstr "&Tercihler"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1112
+msgid "&Find..."
+msgstr "&Bul..."
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1114
+msgid "Ctrl+F"
+msgstr "Ctrl+F"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1116
+msgid "Fin&d and Replace..."
+msgstr "Bu&l ve Değiştir..."
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1118
+msgid "Ctrl+Alt+F"
+msgstr "Ctrl+Alt+F"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1120
+msgid "Find Ne&xt"
+msgstr "Sonrakini Bu&l"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1122
+msgid "Ctrl+G"
+msgstr "Ctrl+G"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1124
+msgid "Find Pre&vious"
+msgstr "Öncekini Bu&l"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1126
+msgid "Ctrl+Shift+G"
+msgstr "Ctrl+Shift+G"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1128
+msgid "Use Se&lection for Find"
+msgstr "Bul için Se&çimi Kullan"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1130
+msgid "Ctrl+E"
+msgstr "Ctrl+E"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1132
+msgid "Jump to next error"
+msgstr "Sonraki hataya atla"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1134
+msgid "Ctrl+Alt+E"
+msgstr "Ctrl+Alt+E"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1136
+msgid "&Flush Caches"
+msgstr "&Önbellekleri Temizle"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1137
+msgid "&OpenSCAD Homepage"
+msgstr "&OpenSCAD Ana Sayfası"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1138
+msgid "&Automatic Reload and Preview"
+msgstr "&Otomatik Yeniden Yükleme ve Önizleme"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1139
+msgid "Export as &Image..."
+msgstr "&Resim olarak dışa aktar..."
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1140
+msgid "Export as &CSG..."
+msgstr "&CSG olarak dışa aktar..."
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1141
+msgid "&Library info"
+msgstr "&Kütüphane bilgileri"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1142
+msgid "Show &Library Folder..."
+msgstr "&Kitaplık Klasörünü Göster..."
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1143
+msgid "Reset View"
+msgstr "Görünümü Sıfırla"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1144
+msgid "&Font List"
+msgstr "&Yazı Tipi Listesi"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1145
+msgid "Export as S&VG..."
+msgstr "S&VG olarak dışa aktar..."
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1146
+msgid "Export as &AMF..."
+msgstr "&AMF olarak dışa aktar..."
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1147
+msgid "Export as &3MF..."
+msgstr "&3MF olarak dışa aktar..."
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1148
+msgid "Zoom In"
+msgstr "Yakınlaş"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1150
+msgid "Ctrl+]"
+msgstr "Ctrl+]"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1152
+msgid "Zoom Out"
+msgstr "Uzaklaştır"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1154
+msgid "Ctrl+["
+msgstr "Ctrl+["
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1156
+msgid "View All"
+msgstr "Tümünü Görüntüle"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1158
+msgid "Ctrl+Shift+V"
+msgstr "Ctrl+Shift+V"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1160
+msgid "Conv&ert Tabs to Spaces"
+msgstr "Sekmeleri Boşluklara Dönüş&tür"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1161
+msgid "Toggle Bookmark"
+msgstr "Yer İşaretini Değiştir"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1163
+msgid "Ctrl+F2"
+msgstr "Ctrl+F2"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1165
+msgid "Jump to next bookmark"
+msgstr "Sonraki yer işaretine atla"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1167
+msgid "F2"
+msgstr "F2"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1169
+msgid "Jump to previous bookmark"
+msgstr "Önceki yer işaretine atla"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1171
+msgid "Shift+F2"
+msgstr "Shift+F2"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1173
+msgid "Hide Editor toolbar"
+msgstr "Düzenleyici araç çubuğunu gizle"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1174
+msgid "U&nindent"
+msgstr "G&irintiyi kaldır"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1176
+msgid "Ctrl+Shift+I"
+msgstr "Ctrl+Shift+I"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1178
+msgid "&Cheat Sheet"
+msgstr "&Kopya Kağıdı"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1179
+msgid "Hide Customizer"
+msgstr "Özelleştiriciyi Gizle"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1180
+msgid "Export as PDF..."
+msgstr "PDF olarak dışa aktar..."
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1181
+msgid "Hide 3D View toolbar"
+msgstr "3B Görünüm araç çubuğunu gizle"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1182
+msgid "Hide Error Log"
+msgstr "Hata Günlüğünü Gizle"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1184
+msgid "Hide ErrorLog"
+msgstr "Hata GünlüğünüGizle"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1186
+msgid "&Editor"
+msgstr "&Düzenleyici"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1187
+msgid "&Console"
+msgstr "&Konsol"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1188
+msgid "C&ustomizer"
+msgstr "Ö&zelleştirici"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1189
+msgid "Error &Log"
+msgstr "Hata &Günlüğü"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1190
+msgid "&Next Window"
+msgstr "&Sonraki Pencere"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1191
+msgid "&Previous Window"
+msgstr "&Önceki Pencere"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1192
+msgid "Insert Template"
+msgstr "Şablon Ekle"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1194
+msgid "Alt+Ins"
+msgstr "Alt+Ins"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1196
+msgid "Message"
+msgstr "İleti"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1199
+msgid "Time:"
+msgstr "Zaman:"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1200
+msgid "FPS:"
+msgstr "FPS:"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1201
+msgid "Steps:"
+msgstr "Adımlar:"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1202
+msgid "Dump Pictures"
+msgstr "Döküm Resimleri"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1203
+msgid "&File"
+msgstr "&Dosya"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1204
+msgid "Recen&t Files"
+msgstr "So&n Dosyalar"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1205
+msgid "&Examples"
+msgstr "&Örnekler"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1206
+msgid "E&xport"
+msgstr "D&ışa aktar"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1207
+msgid "&Edit"
+msgstr "&Düzenle"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1208
+msgid "&Design"
+msgstr "&Tasarım"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1209
+msgid "&View"
+msgstr "&Görünüm"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1210
+msgid "&Help"
+msgstr "&Yardım"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1211
+msgid "&Window"
+msgstr "&Pencere"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1212
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1843 src/gui/Settings.cc:107
+msgid "Tabs"
+msgstr "Sekmeler"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1213
+msgid "Find"
+msgstr "Bul"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1214
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1221
+msgid "Replace"
+msgstr "Yer değiştir"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1216
+msgid "Search string"
+msgstr "Arama dizisi"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1217
+msgid "Previous"
+msgstr "Önceki"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1218
+msgid "Next"
+msgstr "Sonraki"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1219
+msgid "Done"
+msgstr "Bitti"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1220
+msgid "Replacement string"
+msgstr "Yedek dize"
+
+#: build/OpenSCAD_autogen/include/ui_MainWindow.h:1223
+msgid "Customizer Widget"
+msgstr "Özelleştirici Aracı"
+
+#: build/OpenSCAD_autogen/include/ui_OpenCSGWarningDialog.h:83
+msgid "OpenGL Warning"
+msgstr "OpenGL Uyarısı"
+
+#: build/OpenSCAD_autogen/include/ui_OpenCSGWarningDialog.h:84
+msgid ""
+"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/"
+"REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css"
+"\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'Lucida Grande'; font-size:13pt; "
+"font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; "
+"margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"></"
+"p></body></html>"
+msgstr ""
+"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/"
+"REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css"
+"\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'Lucida Grande'; font-size:13pt; "
+"font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; "
+"margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"></"
+"p></body></html>"
+
+#: build/OpenSCAD_autogen/include/ui_OpenCSGWarningDialog.h:89
+msgid "Enable OpenCSG"
+msgstr "OpenCSG'yi Etkinleştir"
+
+#: build/OpenSCAD_autogen/include/ui_OpenCSGWarningDialog.h:90
+msgid "Show this message again"
+msgstr "Bu mesajı tekrar göster"
+
+#: build/OpenSCAD_autogen/include/ui_OpenCSGWarningDialog.h:91
+msgid "Close"
+msgstr "Kapat"
+
+#: build/OpenSCAD_autogen/include/ui_ParameterCheckBox.h:60
+#: build/OpenSCAD_autogen/include/ui_ParameterComboBox.h:55
+#: build/OpenSCAD_autogen/include/ui_ParameterDescriptionWidget.h:99
+#: build/OpenSCAD_autogen/include/ui_ParameterSlider.h:86
+#: build/OpenSCAD_autogen/include/ui_ParameterSpinBox.h:69
+#: build/OpenSCAD_autogen/include/ui_ParameterText.h:55
+#: build/OpenSCAD_autogen/include/ui_ParameterVector.h:108
+#: build/OpenSCAD_autogen/include/ui_ParameterWidget.h:141
+msgid "Form"
+msgstr "Şekil"
+
+#: build/OpenSCAD_autogen/include/ui_ParameterDescriptionWidget.h:100
+msgid "Parameter"
+msgstr "Parametre"
+
+#: build/OpenSCAD_autogen/include/ui_ParameterDescriptionWidget.h:101
+#: build/OpenSCAD_autogen/include/ui_ParameterDescriptionWidget.h:102
+msgid "Description"
+msgstr "Tanım"
+
+#: build/OpenSCAD_autogen/include/ui_ParameterWidget.h:142
+msgid "Automatic Preview"
+msgstr "Otomatik Önizleme"
+
+#: build/OpenSCAD_autogen/include/ui_ParameterWidget.h:143
+msgid "Show Details"
+msgstr "Ayrıntıları Göster"
+
+#: build/OpenSCAD_autogen/include/ui_ParameterWidget.h:144
+msgid "Inline Details"
+msgstr "Satır İçi Ayrıntılar"
+
+#: build/OpenSCAD_autogen/include/ui_ParameterWidget.h:145
+msgid "Hide Details"
+msgstr "Ayrıntıları Gizle"
+
+#: build/OpenSCAD_autogen/include/ui_ParameterWidget.h:146
+msgid "Description Only"
+msgstr "Sadece Açıklama"
+
+#: build/OpenSCAD_autogen/include/ui_ParameterWidget.h:148
+msgid "<design default>"
+msgstr "<design default>"
+
+#: build/OpenSCAD_autogen/include/ui_ParameterWidget.h:151
+msgid "preset selection"
+msgstr "ön ayar seçimi"
+
+#: build/OpenSCAD_autogen/include/ui_ParameterWidget.h:154
+msgid "Add new preset"
+msgstr "Yeni hazır ayar ekle"
+
+#: build/OpenSCAD_autogen/include/ui_ParameterWidget.h:156
+msgid "+"
+msgstr "+"
+
+#: build/OpenSCAD_autogen/include/ui_ParameterWidget.h:158
+msgid "Remove current preset"
+msgstr "Mevcut ön ayarı kaldır"
+
+#: build/OpenSCAD_autogen/include/ui_ParameterWidget.h:160
+msgid "-"
+msgstr "-"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1774
+msgid "3D View"
+msgstr "3D Görünüm"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1775
+msgctxt "preferences"
+msgid "Advanced"
+msgstr "Gelişmiş"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1776
+#: src/gui/MainWindow.cc:2894 src/gui/MainWindow.cc:2899
+msgid "Editor"
+msgstr "Düzenleyici"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1778
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1861
+msgid "Features"
+msgstr "Özellikler"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1780
+msgid "Enable/Disable experimental features"
+msgstr "Deneysel özellikleri Etkinleştir/Devre Dışı Bırak"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1782
+msgid "Axes"
+msgstr "Eksen"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1784
+msgid "Input driver configuration and Axis mapping"
+msgstr "Giriş sürücüsü yapılandırması ve Eksen eşlemesi"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1786
+msgid "Buttons"
+msgstr "Düğmeler"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1787
+#: build/OpenSCAD_autogen/include/ui_PrintInitDialog.h:109
+msgid "3D Print"
+msgstr "3B Yazdır"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1789
+msgid "3D Printing Services"
+msgstr "3B Baskı Hizmetleri"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1791
+msgid "Color scheme:"
+msgstr "Renk şeması:"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1792
+msgid "Show Warnings and Errors in 3D View"
+msgstr "Uyarıları ve Hataları 3B Görünümde Göster"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1793
+msgid "mouse centric zoom"
+msgstr "fare merkezli yakınlaştırma"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1794
+msgid "Number Scroll"
+msgstr "Sayı Kaydırma"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1795 src/gui/Settings.cc:113
+msgid "Alt"
+msgstr "Alt"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1796 src/gui/Settings.cc:113
+msgid "Left Mouse Button"
+msgstr "Sol fare tuşu"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1797 src/gui/Settings.cc:113
+msgid "Either"
+msgstr "Herhangi biri"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1799
+msgid "Step Size"
+msgstr "Adım Boyutu"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1800
+msgid "Number Scroll Via Mouse Wheel"
+msgstr "Fare Tekerleği Üzerinden Sayı Kaydırma"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1801
+msgid "Modifier For Wheel Scroll "
+msgstr "Tekerlerk Kaydırma İçin Değiştirici "
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1802
+msgid "Autocomplete"
+msgstr "Kendiliğinden Tamamlama"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1803
+msgid "Enable Autocompletion"
+msgstr "Otomatik Tamamlamayı Etkinleştir"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1804
+msgid "Character Threshold"
+msgstr "Karakter Eşiği"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1805
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1830
+msgid "Line wrap"
+msgstr "Satır kaydırma"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1806
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1819
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1825 src/gui/Settings.cc:81
+#: src/gui/Settings.cc:98 src/gui/Settings.cc:101 src/gui/Settings.cc:102
+#: src/gui/input/ButtonConfigWidget.cc:249
+msgid "None"
+msgstr "Hiç"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1807 src/gui/Settings.cc:98
+msgid "Wrap at character boundaries"
+msgstr "Karakter sınırlarına sarın"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1808 src/gui/Settings.cc:98
+msgid "Wrap at word boundaries"
+msgstr "Kelime sınırlarına sarın"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1810
+msgid "Line wrap indentation"
+msgstr "Satır sarma girintisi"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1811
+msgid "Line wrap visualization"
+msgstr "Satır sarma görselleştirme"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1812
+msgid "Style"
+msgstr "Stil"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1813 src/gui/Settings.cc:99
+msgid "Fixed"
+msgstr "Onarıldı"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1814 src/gui/Settings.cc:99
+msgid "Same"
+msgstr "Benzer"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1815 src/gui/Settings.cc:99
+msgid "Indented"
+msgstr "Girintili"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1817
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1848 src/gui/Settings.cc:108
+msgid "Indent"
+msgstr "Girintili"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1818
+msgid "Start"
+msgstr "Başlangıç"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1820
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1826 src/gui/Settings.cc:101
+#: src/gui/Settings.cc:102
+msgid "Text"
+msgstr "Metin"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1821
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1827 src/gui/Settings.cc:101
+#: src/gui/Settings.cc:102
+msgid "Border"
+msgstr "Sınır"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1822
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1828 src/gui/Settings.cc:101
+#: src/gui/Settings.cc:102
+msgid "Margin"
+msgstr "Kenar Boşluğu"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1824
+msgid "End"
+msgstr "Son"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1831
+msgid "Display"
+msgstr "Ekran"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1832
+msgid "Highlight current line"
+msgstr "Seçili satırı vurgula"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1833
+msgid "Display Line Numbers"
+msgstr "Satır Sayılarını Göster"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1834
+msgid "Enable brace matching"
+msgstr "Ayraç eşleştirmeyi etkinleştir"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1835
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1900
+msgid "Font"
+msgstr "Yazı Tipi"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1836
+msgid "Color syntax highlighting"
+msgstr "Renk sözdizimi vurgulama"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1837
+msgid "Ctrl/Cmd-Mouse-wheel zooms text"
+msgstr "Ctrl/Cmd-Fare tekerleği metni yakınlaştırır"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1838
+msgid "Indentation"
+msgstr "Girinti"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1839
+msgid "Auto Indent"
+msgstr "Otomatik Girinti"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1840
+msgid "Backspace unindents"
+msgstr "Girintileri geri al"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1841
+msgid "Indent using"
+msgstr "Kullanarak girinti"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1842 src/gui/Settings.cc:107
+msgid "Spaces"
+msgstr "Boşluklar"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1845
+msgid "Indentation width"
+msgstr "Girinti genişliği"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1846
+msgid "Tab width"
+msgstr "Sekme genişliği"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1847
+msgid "Tab key function"
+msgstr "Sekme tuşu işlevi"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1849 src/gui/Settings.cc:108
+msgid "Insert Tab"
+msgstr "Sekme Ekle"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1851
+msgid "Show whitespace"
+msgstr "Boşluğu göster"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1852 src/gui/Settings.cc:103
+msgid "Never"
+msgstr "Asla"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1853 src/gui/Settings.cc:103
+msgid "Always"
+msgstr "Daima"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1854
+msgid "Only after indentation"
+msgstr "Sadece girintiden sonra"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1856
+msgid "Size"
+msgstr "Boyut"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1857
+msgid "Automatically check for updates"
+msgstr "Güncellemeleri otomatik olarak kontrol et"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1858
+msgid "Include development snapshots"
+msgstr "Geliştirme anlık görüntülerini dahil et"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1859
+msgid "Check Now"
+msgstr "Şimdi kontrol et"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1860
+msgid "Last checked: "
+msgstr "Son kontrol: "
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1862
+#: build/OpenSCAD_autogen/include/ui_PrintInitDialog.h:114
+msgid "OctoPrint"
+msgstr "Sekiz Baskı"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1863
+msgid "URL"
+msgstr "URL"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1864
+msgid "API Key"
+msgstr "API Anahtarı"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1865
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1866
+msgid "Load"
+msgstr "Yükle"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1868
+msgid "Check"
+msgstr "Kontrol Et"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1869
+msgid "Slicing Profile"
+msgstr "Dilimleme Profili"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1870
+msgid "Slicing Engine"
+msgstr "Dilimleme Motoru"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1871
+msgid "File Format"
+msgstr "Dosya Biçimi"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1872
+msgid "Action"
+msgstr "Eylem"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1873
+msgid "Show"
+msgstr "Göster"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1874
+msgid "Note: The API key is stored unencrypted in the application settings."
+msgstr "Not: API anahtarı, uygulama ayarlarında şifrelenmemiş olarak saklanır."
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1875
+msgid "OpenCSG"
+msgstr "OpenCSG"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1876
+msgid "Show capability warning"
+msgstr "Yetenek uyarısını göster"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1877
+msgid "Enable for OpenGL 1.x"
+msgstr "OpenGL 1.x için etkinleştir"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1878
+msgid "Turn off rendering at "
+msgstr "Şurada oluşturmayı kapat "
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1879
+msgid "elements"
+msgstr "öğeler"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1880
+msgid "Force Goldfeather"
+msgstr "Altın tüyü zorla"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1881
+msgid "CGAL"
+msgstr "CGAL"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1882
+msgid "CGAL Cache size"
+msgstr "CGAL Önbellek boyutu"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1883
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1885
+msgid "MB"
+msgstr "MB"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1884
+msgid "PolySet Cache size"
+msgstr "Çoklu Ayar Önbellek boyutu"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1886
+msgid "User Interface"
+msgstr "Kullanıcı Arabirimi"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1887
+msgid "Enable docking of Editor and Console in different places"
+msgstr "Düzenleyici ve Konsolun farklı yerlere yerleştirilmesini etkinleştirin"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1888
+msgid "Enable undocking of Editor and Console to separate windows"
+msgstr ""
+"Pencereleri ayırmak için Düzenleyici ve Konsolun ayrılmasını etkinleştirin"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1889
+msgid "Show Welcome Screen"
+msgstr "Karşılama Ekranını Göster"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1890
+msgid "Enable user interface localization (requires restart of OpenSCAD)"
+msgstr ""
+"Kullanıcı arabirimi yerelleştirmesini etkinleştir (OpenSCAD'in yeniden "
+"başlatılmasını gerektirir)"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1891
+msgid "Bring window to front after automatic reload"
+msgstr "Otomatik yeniden yüklemeden sonra pencereyi öne getirin"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1892
+msgid "Play sound notification on render complete"
+msgstr "Oluşturma tamamlandığında sesli bildirimi çal"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1893
+msgid "Play sound when render completion time is at least"
+msgstr "Oluşturma tamamlanma süresi en az olduğunda ses çal"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1894
+msgid "sec"
+msgstr "san"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1895
+msgid "Toolbar Export 3D"
+msgstr ""
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1896
+msgid "Toolbar Export 2D"
+msgstr ""
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1897
+#: src/gui/MainWindow.cc:2912 src/gui/MainWindow.cc:2917
+msgid "Console"
+msgstr "Konsol"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1898
+msgid "Maximum lines for Console to keep:"
+msgstr "Konsolun tutması gereken maksimum satır:"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1899
+msgid "(0 for unlimited)"
+msgstr "(sınırsız için 0)"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1901
+msgid "Toolbar Export Format 3D"
+msgstr ""
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1902
+msgid "STL"
+msgstr ""
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1903
+msgid "OFF"
+msgstr ""
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1904
+#, fuzzy
+msgid "WRL"
+msgstr "URL"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1905
+msgid "AMF"
+msgstr ""
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1906
+msgid "3MF"
+msgstr ""
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1908
+msgid "Toolbar Export Format 2D"
+msgstr ""
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1909
+msgid "none"
+msgstr ""
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1910
+msgid "DXF"
+msgstr ""
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1911
+msgid "SVG"
+msgstr ""
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1912
+msgid "PDF"
+msgstr ""
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1914
+msgid "OpenSCAD Language Features"
+msgstr "OpenSCAD Dil Özellikleri"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1915
+msgid "Warn when there is a parameter mismatch in user module calls"
+msgstr "Kullanıcı modülü çağrılarında parametre uyuşmazlığı olduğunda uyar"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1916
+msgid "Stop on the first warning"
+msgstr "İlk uyarıda dur"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1917
+msgid "Check the parameter range for builtin modules"
+msgstr "Yerleşik modüller için parametre aralığını kontrol edin"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1918
+msgid "Render Summary"
+msgstr ""
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1919
+msgid "Camera"
+msgstr ""
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1920
+msgid "Bounding Box"
+msgstr ""
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1921
+msgid "Measurements: Area"
+msgstr ""
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1922
+msgid "Export Features"
+msgstr "Dışa Aktarma Özellikleri"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1923
+msgid "Default to ASCII STL export"
+msgstr "Varsayılan olarak ASCII STL dışa aktarma"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1924
+msgid "Debugging"
+msgstr "Hata Ayıklama"
+
+#: build/OpenSCAD_autogen/include/ui_Preferences.h:1925
+msgid "Enable tracing of HIDAPI events (requires restart of OpenSCAD)"
+msgstr ""
+"HIDAPI olaylarının izlenmesini etkinleştir (OpenSCAD'in yeniden "
+"başlatılmasını gerektirir)"
+
+#: build/OpenSCAD_autogen/include/ui_PrintInitDialog.h:111
+msgid "Cancel"
+msgstr "Vazgeç"
+
+#: build/OpenSCAD_autogen/include/ui_PrintInitDialog.h:113
+msgid "%1"
+msgstr "%1"
+
+#: build/OpenSCAD_autogen/include/ui_ProgressWidget.h:70
+msgid "%v / %m"
+msgstr "%v / %m"
+
+#: src/Camera.cc:197
+#, c-format
+msgid ""
+"Viewport: translate = [ %.2f %.2f %.2f ], rotate = [ %.2f %.2f %.2f ], "
+"distance = %.2f, fov = %.2f"
+msgstr ""
+"Görünüm alanı: çeviri = [ %.2f %.2f %.2f ], döndür = [ %.2f %.2f %.2f ], "
+"mesafe = %.2f, fov = %.2f"
+
+#: src/export.cc:108
+#, c-format
+msgid "Can't open file \"%1$s\" for export"
+msgstr "\"%1$s\" dosyası dışa aktarma için açılamıyor"
+
+#: src/export.cc:123
+#, c-format
+msgid "\"%1$s\" write error. (Disk full?)"
+msgstr "\"%1$s\" yazma hatası. (Disk dolu?)"
+
+#: src/gui/Network.h:116
+msgid "Timeout error"
+msgstr "Zaman aşımı hatası"
+
+#: src/gui/Console.cc:125
+msgid "Save console content"
+msgstr "Konsol içeriğini kaydet"
+
+#: src/gui/MainWindow.cc:1154
+msgid "Compile error."
+msgstr "Derleme hatası."
+
+#: src/gui/MainWindow.cc:1157
+msgid "Error while compiling '%1'."
+msgstr "'%1' derlenirken hata oluştu."
+
+#: src/gui/MainWindow.cc:1161
+msgid "Compilation generated %1 warning."
+msgid_plural "Compilation generated %1 warnings."
+msgstr[0] "Derleme %1 uyarısı oluşturdu."
+msgstr[1] "Derleme %1 uyarıları oluşturdu."
+
+#: src/gui/MainWindow.cc:1171
+msgid ""
+" For details see the <a href=\"#errorlog\">error log</a> and <a href="
+"\"#console\">console window</a>."
+msgstr ""
+" Ayrıntılar için <a href=\"#errorlog\">hata günlüğüne</a> ve <a href="
+"\"#console\">konsol penceresine</a> bakın."
+
+#: src/gui/MainWindow.cc:1846
+msgid "Application"
+msgstr "Uygulama"
+
+#: src/gui/MainWindow.cc:1847
+msgid ""
+"The document has been modified.\n"
+"Do you really want to reload the file?"
+msgstr ""
+"Belge değiştirildi.\n"
+"Dosyayı gerçekten yeniden yüklemek istiyor musunuz?"
+
+#: src/gui/MainWindow.cc:2109
+msgid "Exported design exceeds the service upload limit of (%1 MB)."
+msgstr "Dışa aktarılan tasarım, hizmet yükleme sınırını (%1 MB) aşıyor."
+
+#: src/gui/MainWindow.cc:2110
+msgid "Upload Error"
+msgstr "Yükleme Hatası"
+
+#: src/gui/MainWindow.cc:2515
+msgid "Export %1 File"
+msgstr "%1 Dosyasını Dışa Aktar"
+
+#: src/gui/MainWindow.cc:2516
+msgid "%1 Files (*%2)"
+msgstr "%1 Dosya (*%2)"
+
+#: src/gui/MainWindow.cc:2587
+msgid "Export CSG File"
+msgstr "CSG Dosyasını Dışa Aktar"
+
+#: src/gui/MainWindow.cc:2587
+msgid "CSG Files (*.csg)"
+msgstr "CSG Dosyaları (*.csg)"
+
+#: src/gui/MainWindow.cc:2613
+msgid "Export Image"
+msgstr "Görüntüyü Dışa Aktar"
+
+#: src/gui/MainWindow.cc:2613
+msgid "PNG Files (*.png)"
+msgstr "PNG Dosyaları (*.png)"
+
+#: src/gui/MainWindow.cc:2928
+msgid "Customizer"
+msgstr "Özelleştirici"
+
+#: src/gui/MainWindow.cc:2933 src/gui/MainWindow.cc:2938
+msgid "Error-Log"
+msgstr "Hata-Günlüğü"
+
+#: src/gui/MainWindow.cc:2952 src/gui/TabManager.cc:213
+#: src/gui/TabManager.cc:458 src/gui/TabManager.cc:520
+#: src/gui/TabManager.cc:691
+msgid "Untitled.scad"
+msgstr "Başlıksız.scad"
+
+#: src/gui/MainWindow.cc:3353 src/gui/MainWindow.cc:3356
+msgid "Untitled"
+msgstr "Başlıksız"
+
+#: src/gui/OpenSCADApp.cc:61
+msgid "Unknown error"
+msgstr "Bilinmeyen hata"
+
+#: src/gui/OpenSCADApp.cc:64
+msgid "Critical Error"
+msgstr "Kritik Hata"
+
+#: src/gui/OpenSCADApp.cc:64
+msgid ""
+"A critical error was caught. The application may have become unstable:\n"
+"%1"
+msgstr ""
+"Kritik bir hata yakalandı. Uygulama kararsız hale gelmiş olabilir:\n"
+"%1"
+
+#: src/gui/OpenSCADApp.cc:88
+msgid ""
+"Fontconfig needs to update its font cache.\n"
+"This can take up to a couple of minutes."
+msgstr ""
+"Yazı tipi yapılandırması`nın yazı tipi önbelleğini güncellemesi gerekiyor.\n"
+"Bu birkaç dakika kadar sürebilir."
+
+#: src/gui/Preferences.cc:209 src/gui/Preferences.cc:214
+#: src/gui/Preferences.cc:781 src/gui/Preferences.cc:817
+msgid "<Default>"
+msgstr "<Default>"
+
+#: src/gui/Preferences.cc:765
+msgid "Success: Server Version = %2, API Version = %1"
+msgstr "Başarılı: Sunucu Sürümü = %2, API Sürümü = %1"
+
+#: src/gui/Preferences.cc:767 src/gui/Preferences.cc:791
+#: src/gui/Preferences.cc:827
+msgid "Error"
+msgstr "Hata"
+
+#: src/gui/PrintInitDialog.cc:44
+msgid "Print Service not available"
+msgstr "Yazdırma Hizmeti mevcut değil"
+
+#: src/gui/QGLView.cc:151
+msgid ""
+"Warning: You may experience OpenCSG rendering errors.\n"
+"\n"
+msgstr ""
+"Uyarı: OpenCSG oluşturma hatalarıyla karşılaşabilirsiniz.\n"
+"\n"
+
+#: src/gui/QGLView.cc:153
+msgid ""
+"Warning: Missing OpenGL capabilities for OpenCSG - OpenCSG has been "
+"disabled.\n"
+"\n"
+msgstr ""
+"Uyarı: OpenCSG için eksik OpenGL yetenekleri - OpenCSG devre dışı "
+"bırakıldı.\n"
+"\n"
+
+#: src/gui/QGLView.cc:156
+msgid ""
+"It is highly recommended to use OpenSCAD on a system with OpenGL 2.0 or "
+"later.\n"
+"Your renderer information is as follows:\n"
+msgstr ""
+"OpenSCAD'i OpenGL 2.0 veya daha sonraki bir sistemde kullanmanız şiddetle "
+"tavsiye edilir.\n"
+"Oluşturucu bilgileriniz aşağıdaki gibidir:\n"
+
+#: src/gui/QGLView.cc:159
+msgid ""
+"GLEW version %1\n"
+"%2 (%3)\n"
+"OpenGL version %4\n"
+msgstr ""
+"GLEW sürümü %1\n"
+"%2 (%3)\n"
+"OpenGL sürümü %4\n"
+
+#: src/gui/Settings.cc:84
+#, c-format
+msgid "Axis %d"
+msgstr "Eksen %d"
+
+#: src/gui/Settings.cc:88
+#, c-format
+msgid "Axis %d (inverted)"
+msgstr "Eksen %d (ters çevrilmiş)"
+
+#: src/gui/Settings.cc:103
+msgid "After indentation"
+msgstr "Girintiden sonra"
+
+#: src/gui/Settings.cc:119
+msgid "Upload only"
+msgstr "Yalnızca yükle"
+
+#: src/gui/Settings.cc:119
+msgid "Upload & Slice"
+msgstr "Yükle & Dilimle"
+
+#: src/gui/Settings.cc:119
+msgid "Upload, Slice & Select for printing"
+msgstr "Yazdırmak için Yükle, Dilimle ve Seç"
+
+#: src/gui/Settings.cc:119
+msgid "Upload, Slice & Start printing"
+msgstr "Yükle, Dilimle ve Yazdırmaya Başla"
+
+#: src/gui/TabManager.cc:403
+msgid "Copy file name"
+msgstr "Dosya adını kopyala"
+
+#: src/gui/TabManager.cc:409
+msgid "Copy full path"
+msgstr "Tam yolu kopyala"
+
+#: src/gui/TabManager.cc:415
+#, fuzzy
+msgid "Open folder"
+msgstr "&Dosya Aç"
+
+#: src/gui/TabManager.cc:420
+msgid "Close Tab"
+msgstr "Sekmeyi Kapat"
+
+#: src/gui/TabManager.cc:567
+msgid "The document has been modified."
+msgstr "Belge değiştirildi."
+
+#: src/gui/TabManager.cc:568
+msgid "Do you want to save your changes?"
+msgstr "Değişiklikleri kaydetmek istiyor musunuz?"
+
+#: src/gui/TabManager.cc:599
+msgid "Some tabs have unsaved changes."
+msgstr "Bazı sekmelerde kaydedilmemiş değişiklikler var."
+
+#: src/gui/TabManager.cc:600
+msgid "Do you want to save all your changes?"
+msgstr "Tüm değişikliklerinizi kaydetmek istiyor musunuz?"
+
+#: src/gui/TabManager.cc:661
+msgid "Failed to open file for writing"
+msgstr "Dosya yazmak için açılamadı"
+
+#: src/gui/TabManager.cc:682
+msgid "Error saving design"
+msgstr "Tasarım kaydedilirken hata oluştu"
+
+#: src/gui/TabManager.cc:692
+msgid "Save File"
+msgstr "Dosyayı Kaydet"
+
+#: src/gui/TabManager.cc:692
+msgid "OpenSCAD Designs (*.scad)"
+msgstr "OpenSCAD Tasarımları (*.scad)"
+
+#: src/gui/TabManager.cc:705
+msgid ""
+"%1 already exists.\n"
+"Do you want to replace it?"
+msgstr ""
+"%1 zaten var.\n"
+"Değiştirmek istiyor musun?"
+
+#: src/gui/input/AxisConfigWidget.h:84
+msgid ""
+"This driver was not enabled during build time and is thus not available."
+msgstr ""
+"Bu sürücü, oluşturma süresi boyunca etkinleştirilmedi ve bu nedenle mevcut "
+"değil."
+
+#: src/gui/input/AxisConfigWidget.h:86
+msgid ""
+"The DBUS driver is not for actual devices but for remote control, Linux only."
+msgstr ""
+"DBUS sürücüsü, gerçek cihazlar için değil, uzaktan kumanda içindir, yalnızca "
+"Linux."
+
+#: src/gui/input/AxisConfigWidget.h:87
+msgid ""
+"The HIDAPI driver communicates directly with the 3D mice, Windows and macOS."
+msgstr ""
+"HIDAPI sürücüsü, doğrudan 3B fareler, Windows ve macOS ile iletişim kurar."
+
+#: src/gui/input/AxisConfigWidget.h:88
+msgid ""
+"The SpaceNav driver enables 3D-input-devices using the spacenavd daemon, "
+"Linux only."
+msgstr ""
+"BoşluktaGezinme sürücüsü, yalnızca Linux olan spacenavd arka plan programını "
+"kullanan 3B giriş aygıtlarını etkinleştirir."
+
+#: src/gui/input/AxisConfigWidget.h:89
+msgid ""
+"The Joystick driver uses the Linux joystick device (fixed to /dev/input/"
+"js0), Linux only."
+msgstr ""
+"Oyun kolu sürücüsü, yalnızca Linux Oyun kolu aygıtını (/dev/input/js0'a "
+"sabitlenmiştir) kullanır."
+
+#: src/gui/input/AxisConfigWidget.h:90
+msgid "The QGAMEPAD driver is for multiplattform Gamepad Support."
+msgstr ""
+"QOyun kumandası sürücüsü, çok platformlu Oyun kumandası Desteği içindir."
+
+#: src/gui/input/ButtonConfigWidget.cc:250
+msgid "Toggle Perspective"
+msgstr "Perspektifi Değiştir"
+
+#: src/gui/parameter/ParameterWidget.cc:94
+msgid "Saving presets"
+msgstr "Ön ayarları kaydetme"
+
+#: src/gui/parameter/ParameterWidget.cc:95
+msgid "%1 was found, but was unreadable. Do you want to overwrite %1?"
+msgstr "%1 bulundu, ancak okunamadı. %1'in üzerine yazmak istiyor musunuz?"
+
+#: src/gui/parameter/ParameterWidget.cc:195
+msgid "Create new set of parameter"
+msgstr "Yeni parametre seti oluştur"
+
+#: src/gui/parameter/ParameterWidget.cc:196
+msgid "Enter name of the parameter set"
+msgstr "Parametre setinin adını girin"
+
+#: src/gui/parameter/ParameterWidget.cc:241
+msgid "New set "
+msgstr "Yeni set "
+
+#: examples/examples.json:2
+msgid "Basics"
+msgstr "Temel bilgiler"
+
+#: examples/examples.json:14
+msgid "Functions"
+msgstr "Fonksiyonlar"
+
+#: examples/examples.json:21
+msgid "Advanced"
+msgstr "Gelişmiş"
+
+#: examples/examples.json:31
+msgid "Parametric"
+msgstr "Parametrik"
+
+#: examples/examples.json:35
+msgid "Old"
+msgstr "Eski"
+
+#. (itstool) path: component/summary
+#: openscad.appdata.xml.in:6
+msgid "The Programmers Solid 3D CAD Modeller"
+msgstr "Programcılar Katı 3B CAD Modelleyici"
+
+#. (itstool) path: description/p
+#: openscad.appdata.xml.in:20
+msgid ""
+"OpenSCAD is a software for creating solid 3D CAD models. Unlike most free "
+"software for creating 3D models (such as Blender) it does not focus on the "
+"artistic aspects of 3D modelling but instead on the CAD aspects. Thus it "
+"might be the application you are looking for when you are planning to create "
+"3D models of machine parts but pretty sure is not what you are looking for "
+"when you are more interested in creating computer-animated movies."
+msgstr ""
+"OpenSCAD, katı 3B CAD modelleri oluşturmak için bir yazılımdır. 3B modeller "
+"oluşturmaya yönelik çoğu ücretsiz yazılımın (Blender gibi) aksine, 3B "
+"modellemenin sanatsal yönlerine değil, CAD yönlerine odaklanır. Bu nedenle, "
+"makine parçalarının 3B modellerini oluşturmayı planlarken aradığınız "
+"uygulama olabilir, ancak bilgisayar ile animasyonlu filmler oluşturmakla "
+"daha çok ilgilendiğinizde aradığınız şey bu değildir."
+
+#. (itstool) path: description/p
+#: openscad.appdata.xml.in:21
+msgid ""
+"OpenSCAD is not an interactive modeller. Instead it is something like a 3D-"
+"compiler that reads in a script file that describes the object and renders "
+"the 3D model from this script file. This gives you (the designer) full "
+"control over the modelling process and enables you to easily change any step "
+"in the modelling process or make designs that are defined by configurable "
+"parameters."
+msgstr ""
+"OpenSCAD etkileşimli bir modelleyici değildir. Bunun yerine, nesneyi "
+"tanımlayan bir komut dosyasında okuyan ve bu komut dosyasından 3B modeli "
+"işleyen bir 3B derleyici gibi bir şeydir. Bu size (tasarımcıya) modelleme "
+"süreci üzerinde tam kontrol sağlar ve modelleme sürecindeki herhangi bir "
+"adımı kolayca değiştirmenize veya yapılandırılabilir parametrelerle "
+"tanımlanan tasarımlar yapmanıza olanak tanır."
+
+#. (itstool) path: description/p
+#: openscad.appdata.xml.in:22
+msgid ""
+"OpenSCAD provides two main modelling techniques: First there is constructive "
+"solid geometry (aka CSG) and second there is extrusion of 2D outlines. As "
+"data exchange format for this 2D outlines Autocad DXF files are used. In "
+"addition to 2D paths for extrusion it is also possible to read design "
+"parameters from DXF files. Besides DXF files OpenSCAD can read and create 3D "
+"models in the STL and OFF file formats."
+msgstr ""
+"OpenSCAD iki ana modelleme tekniği sunar: Birincisi yapıcı katı geometri "
+"(aka CSG) ve ikincisi 2B anahatların ekstrüzyonu vardır. Bu 2B anahatlar "
+"için veri alışverişi formatı olarak Autocad DXF dosyaları kullanılır. "
+"Ekstrüzyon için 2B yollara ek olarak, DXF dosyalarından tasarım "
+"parametrelerini okumak da mümkündür. DXF dosyalarının yanı sıra OpenSCAD, "
+"STL ve OFF dosya formatlarında 3B modelleri okuyabilir ve oluşturabilir."

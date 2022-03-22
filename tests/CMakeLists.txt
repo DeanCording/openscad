@@ -8,6 +8,8 @@ if(POLICY CMP0017)
   # http://www.cmake.org/cmake/help/cmake-2-8-docs.html#policy:CMP0017
   cmake_policy(SET CMP0017 NEW)
 endif()
+# Interpret IN_LIST
+cmake_policy(SET CMP0057 NEW)
 
 project(openscad_tests)
 enable_testing()
@@ -213,6 +215,77 @@ function(is_2d FULLNAME RESULT)
   endif()
 endfunction()
 
+# Specific tests for which fast-csg cannot be enabled yet.
+list(APPEND TESTS_FAILING_WITH_FAST_CSG
+  # Different order of vertices
+  3mfexport_3mf-export
+  # Test script argument passing issue
+  cgalstlsanitytest_normal-nan
+)
+
+# Tests for which fast-csg works but produces different expectation files.
+# These tests are run twice (w/ and without fast-csg).
+list(APPEND SCADFILES_FAILING_WITH_FAST_CSG
+  # Corefinement leaves some polyhedra in a state that we can't build Nefs from
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/3D/features/mirror-tests.scad
+  # Resize issue!
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/3D/features/resize-convexity-tests.scad
+  # Needs investigation:
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/3D/issues/issue1246.scad
+)
+list(APPEND FAST_CSG_TRUST_FAILING_SCADFILES
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/3D/features/edge-cases.scad
+)
+
+# Tests for which fast-csg works but produces different expectation files.
+# These tests are run twice (w/ and without fast-csg).
+list(APPEND SCADFILES_WITH_DIFFERENT_FAST_CSG_EXPECTATIONS
+  # This one no longer crashes, yay!
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/bugs/issue1455.scad
+  # These are less broken than before:
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/bugs/issue791.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/3D/issues/issue1138.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/3D/issues/issue1137.scad
+
+  # No more green faces from differences.
+  ${CMAKE_CURRENT_SOURCE_DIR}/../examples/Basics/CSG-modules.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/../examples/Basics/CSG.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/../examples/Basics/logo.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/../examples/Old/example001.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/../examples/Old/example002.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/../examples/Old/example003.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/../examples/Old/example004.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/../examples/Old/example005.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/../examples/Old/example006.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/../examples/Old/example012.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/../examples/Old/example016.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/../examples/Old/example024.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/2D/features/highlight-modifier-2d.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/3D/features/difference-tests.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/3D/features/highlight-modifier.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/3D/features/highlight-modifier2.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/3D/features/minkowski3-erosion.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/3D/features/render-tests.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/3D/issues/issue1105.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/3D/issues/issue1105b.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/3D/issues/issue1105c.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/3D/issues/issue1105d.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/3D/issues/issue1215c.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/3D/issues/issue1803.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/3D/issues/issue3158.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/3D/issues/issue835.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/3D/issues/issue911.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/3D/issues/issue913.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/3D/misc/view-options-tests.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/misc/internal-cavity-polyhedron.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/misc/internal-cavity.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/misc/let-module-tests.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/misc/rotate_extrude-hole.scad
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/misc/rotate-empty-bbox.scad
+  # Less broken and no green faces
+  ${CMAKE_CURRENT_SOURCE_DIR}/data/scad/3D/features/polyhedron-tests.scad
+)
+
 #
 # This functions adds cmd-line tests given files.
 #
@@ -269,13 +342,23 @@ function(add_cmdline_test TESTCMD_BASENAME)
 
       list(FIND EXPERIMENTAL_TESTS ${TEST_FULLNAME} EXPERIMENTAL_TEST)
 
-      if (${EXPERIMENTAL_TEST} EQUAL -1)
-        set(EXPERIMENTAL_OPTION "")
-      else()
-        # add global experimental options here
-        set(EXPERIMENTAL_OPTION ${EXPERIMENTAL_OPTION} "--enable=roof" "--enable=lazy-union" "--enable=textmetrics")
-      endif()
+      set(EXPERIMENTAL_OPTION "")
 
+      if (NOT (${EXPERIMENTAL_TEST} EQUAL -1))
+        # add global experimental options here
+        set(EXPERIMENTAL_OPTION ${EXPERIMENTAL_OPTION} "--enable=roof" "--enable=lazy-union" "--enable=textmetrics" "--enable=import-function")
+      endif()
+      
+      # Enable fast-csg for all tests but those that have different expectations or fail for other reasons.
+      if (NOT SCADFILE IN_LIST SCADFILES_WITH_DIFFERENT_FAST_CSG_EXPECTATIONS
+          AND NOT SCADFILE IN_LIST SCADFILES_FAILING_WITH_FAST_CSG
+          AND NOT TEST_FULLNAME IN_LIST TESTS_FAILING_WITH_FAST_CSG)
+        set(EXPERIMENTAL_OPTION ${EXPERIMENTAL_OPTION} "--enable=fast-csg" "--enable=fast-csg-remesh")
+        if (NOT SCADFILE IN_LIST FAST_CSG_TRUST_FAILING_SCADFILES)
+          set(EXPERIMENTAL_OPTION ${EXPERIMENTAL_OPTION} "--enable=fast-csg-trust-corefinement")
+        endif()
+      endif()
+        
       # 2D tests should be viewed from the top, not an angle.
       set(CAMERA_OPTION "")
       is_2d(${SCADFILE} IS2D)
@@ -336,7 +419,7 @@ endfunction()
 function(add_failing_test TESTCMD_BASENAME)
   cmake_parse_arguments(TESTCMD "" "RETVAL;EXE;SCRIPT;SUFFIX" "FILES;ARGS" ${ARGN})
 
-  if ("${TESTCMD_SUFFIX}" STREQUAL "") # Suffix "off" counts as a falsy value, so check diectly for empty string.
+  if ("${TESTCMD_SUFFIX}" STREQUAL "") # Suffix "off" counts as a false value, so check directly for empty string.
     message(FATAL_ERROR "add_failing_test() requires SUFFIX to be set" )
   endif()
   if (NOT TESTCMD_EXE)
@@ -408,8 +491,11 @@ file(GLOB SCAD_DXF_FILES      ${TEST_SCAD_DIR}/dxf/*.scad)
 file(GLOB SCAD_PDF_FILES      ${TEST_SCAD_DIR}/pdf/*.scad)
 file(GLOB SCAD_SVG_FILES      ${TEST_SCAD_DIR}/svg/svg-spec/*.scad
   ${TEST_SCAD_DIR}/svg/box-w-holes-2d.scad
+  ${TEST_SCAD_DIR}/svg/display.scad
   ${TEST_SCAD_DIR}/svg/line-cap-line-join.scad
-  ${TEST_SCAD_DIR}/svg/simple-center-2d.scad)
+  ${TEST_SCAD_DIR}/svg/simple-center-2d.scad
+  ${TEST_SCAD_DIR}/svg/use-transform.scad
+  ${TEST_SCAD_DIR}/svg/size-percent.scad)
 file(GLOB SCAD_AMF_FILES           ${TEST_SCAD_DIR}/amf/*.scad)
 file(GLOB SCAD_NEF3_FILES          ${TEST_SCAD_DIR}/nef3/*.scad)
 file(GLOB FUNCTION_FILES           ${TEST_SCAD_DIR}/functions/*.scad)
@@ -532,6 +618,8 @@ list(APPEND ECHO_FILES ${FUNCTION_FILES} ${MISC_FILES} ${REDEFINITION_FILES}
   ${TEST_SCAD_DIR}/misc/root-modifier-for.scad
   ${TEST_DATA_DIR}/use-order-test/use-order-test.scad
   ${TEST_SCAD_DIR}/misc/text-metrics-test.scad
+  ${TEST_SCAD_DIR}/json/import-json.scad
+  ${TEST_SCAD_DIR}/misc/vector-swizzling.scad
 )
 
 list(APPEND ASTDUMPTEST_FILES ${MISC_FILES}
@@ -743,6 +831,7 @@ experimental_tests(csgpngtest_text-metrics)
 experimental_tests(throwntogethertest_text-metrics)
 experimental_tests(dxfpngtest_text-metrics)
 experimental_tests(svgpngtest_text-metrics)
+experimental_tests(echotest_import-json)
 
 # Test config handling
 
@@ -793,6 +882,7 @@ set_test_config(Heavy FILES
   stlpngtest_surface
   stlpngtest_rounded_box
   stlpngtest_translation
+  fastcsg-cgalpng_minkowski3-erosion
 )
 
 # We know that we cannot import weakly manifold files into CGAL, so to make tests easier
@@ -940,6 +1030,13 @@ list(APPEND LAZYUNION_2D_FILES
 )
 list(APPEND LAZYUNION_FILES ${LAZYUNION_2D_FILES} ${LAZYUNION_3D_FILES})
 
+list(APPEND FASTCSG_LAZYUNION_FILES ${LAZYUNION_3D_FILES}
+  ${TEST_SCAD_DIR}/experimental/fastcsg-lazyunion-issue4109-1.scad
+  ${TEST_SCAD_DIR}/experimental/fastcsg-lazyunion-issue4109-2.scad
+  ${TEST_SCAD_DIR}/experimental/fastcsg-lazyunion-issue4109-3.scad
+  ${TEST_SCAD_DIR}/experimental/fastcsg-lazyunion-issue4109-4.scad
+)
+
 experimental_tests(lazyunion-dump_lazyunion-toplevel-2dobjects)
 experimental_tests(lazyunion-dump_lazyunion-toplevel-objects)
 experimental_tests(lazyunion-dump_lazyunion-toplevel-for)
@@ -1021,6 +1118,20 @@ add_cmdline_test(lazyunion-offpngtest  SCRIPT ${EXPORT_IMPORT_PNGTEST_PY} SUFFIX
 add_cmdline_test(lazyunion-dxfpngtest  SCRIPT ${EXPORT_IMPORT_PNGTEST_PY} SUFFIX png FILES ${LAZYUNION_2D_FILES} EXPECTEDDIR lazyunion-cgalpng     ARGS --openscad=${OPENSCAD_BINPATH} --format=DXF --enable=lazy-union --render=cgal)
 add_cmdline_test(lazyunion-svgpngtest  SCRIPT ${EXPORT_IMPORT_PNGTEST_PY} SUFFIX png FILES ${LAZYUNION_2D_FILES} EXPECTEDDIR lazyunion-cgalpng     ARGS --openscad=${OPENSCAD_BINPATH} --format=SVG --enable=lazy-union --render=cgal)
 
+add_cmdline_test(fastcsg-cgalpng       OPENSCAD SUFFIX png FILES ${SCADFILES_WITH_DIFFERENT_FAST_CSG_EXPECTATIONS}                     ARGS --enable=fast-csg --enable=fast-csg-remesh --enable=fast-csg-trust-corefinement --render)
+add_cmdline_test(fastcsg-lazyunion-cgalpng     OPENSCAD SUFFIX png FILES ${FASTCSG_LAZYUNION_FILES} ARGS --enable=lazy-union --render)
+add_cmdline_test(fastcsg-lazyunion-amfpngtest    SCRIPT ${EXPORT_IMPORT_PNGTEST_PY} SUFFIX png FILES ${FASTCSG_LAZYUNION_FILES} EXPECTEDDIR fastcsg-lazyunion-monotonepngtest ARGS --enable=lazy-union --openscad=${OPENSCAD_BINPATH} --format=AMF)
+add_cmdline_test(fastcsg-lazyunion-3mfpngtest    SCRIPT ${EXPORT_IMPORT_PNGTEST_PY} SUFFIX png FILES ${FASTCSG_LAZYUNION_FILES} EXPECTEDDIR fastcsg-lazyunion-monotonepngtest ARGS --enable=lazy-union --openscad=${OPENSCAD_BINPATH} --format=3MF)
+
+list(APPEND FASTCSG_REMESH_FILES
+  ${TEST_SCAD_DIR}/experimental/fastcsg-remesh-cubes.scad
+  ${TEST_SCAD_DIR}/experimental/fastcsg-remesh-cube-1.scad
+  ${TEST_SCAD_DIR}/experimental/fastcsg-remesh-cube-2.scad
+)
+
+add_cmdline_test(remesh-cgalpng OPENSCAD SUFFIX png FILES ${FASTCSG_REMESH_FILES} ARGS --enable=fast-csg --enable=fast-csg-remesh --enable=fast-csg-trust-corefinement --render)
+add_cmdline_test(remesh-stl     OPENSCAD SUFFIX stl FILES ${FASTCSG_REMESH_FILES} ARGS --enable=sort-stl --enable=fast-csg --enable=fast-csg-remesh-predictibly --enable=fast-csg-trust-corefinement --render)
+
 #
 # Trivial Export/Import files
 # This sanity-checks bidirectional file format import/export
@@ -1044,8 +1155,7 @@ add_cmdline_test(pdfexporttest SCRIPT ${EXPORT_PNGTEST_PY} SUFFIX png FILES ${SC
 
 add_cmdline_test(monotonepngtest OPENSCAD SUFFIX png FILES ${EXPORT3D_CGAL_TEST_FILES} ${EXPORT3D_CGALCGAL_TEST_FILES} ARGS --colorscheme=Monotone --render)
 
-# Disabled for now, needs implementation of #420 to be stable
-#add_cmdline_test(stlexport             ARGS SUFFIX stl FILES ${EXPORT_STL_TEST_FILES})
+add_cmdline_test(stlexport             OPENSCAD SUFFIX stl FILES ${EXPORT_STL_TEST_FILES} ARGS --enable=sort-stl --render)
 add_cmdline_test(3mfexport             OPENSCAD ARGS SUFFIX 3mf FILES ${EXPORT_3MF_TEST_FILES})
 
 # stlpngtest: direct STL output, preview rendering
@@ -1162,6 +1272,7 @@ add_cmdline_test(openscad-colorscheme-sunset          OPENSCAD FILES ${EXAMPLES_
 add_cmdline_test(openscad-colorscheme-starnight       OPENSCAD FILES ${EXAMPLES_DIR}/Basics/logo.scad SUFFIX png ARGS --colorscheme=Starnight)
 add_cmdline_test(openscad-colorscheme-monotone        OPENSCAD FILES ${EXAMPLES_DIR}/Basics/logo.scad SUFFIX png ARGS --colorscheme=Monotone)
 add_cmdline_test(openscad-colorscheme-metallic-render OPENSCAD FILES ${EXAMPLES_DIR}/Basics/CSG.scad  SUFFIX png ARGS --colorscheme=Metallic --render)
+add_cmdline_test(openscad-colorscheme-clearsky        OPENSCAD FILES ${EXAMPLES_DIR}/Basics/logo.scad SUFFIX png ARGS --colorscheme=ClearSky)
 
 #message("Available test configurations: ${TEST_CONFIGS}")
 #foreach(CONF ${TEST_CONFIGS})

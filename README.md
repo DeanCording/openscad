@@ -1,16 +1,14 @@
 [![GitHub (master)](https://img.shields.io/github/checks-status/openscad/openscad/master.svg?logo=github&label=build&logoColor=black&colorA=f9d72c&style=plastic)](https://github.com/openscad/openscad/actions)
-[![Travis (master)](https://img.shields.io/travis/openscad/openscad/master.svg?logo=travis&logoColor=black&colorA=f9d72c&style=plastic)](https://travis-ci.org/openscad/openscad/)
 [![CircleCI (master)](https://img.shields.io/circleci/project/github/openscad/openscad/master.svg?logo=circleci&logoColor=black&colorA=f9d72c&style=plastic)](https://circleci.com/gh/openscad/openscad/tree/master)
 [![Coverity Scan](https://img.shields.io/coverity/scan/2510.svg?colorA=f9d72c&logoColor=black&style=plastic)](https://scan.coverity.com/projects/2510)
 
-
-[![Visit our IRC channel](https://kiwiirc.com/buttons/irc.freenode.net/openscad.png)](https://kiwiirc.com/client/irc.freenode.net/#openscad)
+[![Visit our IRC channel](https://kiwiirc.com/buttons/irc.libera.chat/openscad.png)](https://kiwiirc.com/client/irc.libera.chat/#openscad)
 
 # What is OpenSCAD?
-[![Flattr this git repo](https://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=openscad&url=http://openscad.org&title=OpenSCAD&language=&tags=github&category=software)
+<p><a href="https://opencollective.com/openscad/donate"><img align="right" src="https://opencollective.com/openscad/donate/button@2x.png?color=white" width="200"/></a>
 
-OpenSCAD is a software for creating solid 3D CAD objects. It is free software
-and available for Linux/UNIX, MS Windows and Mac OS X.
+OpenSCAD is a software for creating solid 3D CAD objects. It is free software and
+available for Linux/UNIX, MS Windows and macOS.</p>
 
 Unlike most free software for creating 3D models (such as the famous
 application Blender), OpenSCAD focuses on the CAD aspects rather than the 
@@ -39,7 +37,7 @@ STL and OFF file formats.
     - [Building OpenSCAD](#building-openscad)
         - [Prerequisites](#prerequisites)
         - [Getting the source code](#getting-the-source-code)
-        - [Building for Mac OS X](#building-for-mac-os-x)
+        - [Building for macOS](#building-for-macos)
         - [Building for Linux/BSD](#building-for-linuxbsd)
         - [Building for Linux/BSD on systems with older or missing dependencies](#building-for-linuxbsd-on-systems-with-older-or-missing-dependencies)
         - [Building for Windows](#building-for-windows)
@@ -108,7 +106,7 @@ Follow the instructions for the platform you're compiling on below.
 * [cmake (3.5 ->)](https://cmake.org/)
 * [Qt (5.4 ->)](https://qt.io/)
 * [QScintilla2 (2.9 ->)](https://riverbankcomputing.com/software/qscintilla/)
-* [CGAL (4.9 ->)](https://www.cgal.org/)
+* [CGAL (5.4 ->)](https://www.cgal.org/)
  * [GMP (5.x)](https://gmplib.org/)
  * [MPFR (3.x)](https://www.mpfr.org/)
 * [boost (1.56 ->)](https://www.boost.org/)
@@ -129,7 +127,7 @@ Follow the instructions for the platform you're compiling on below.
 
 Install git (https://git-scm.com/) onto your system. Then run a clone:
 
-    git clone git://github.com/openscad/openscad.git
+    git clone https://github.com/openscad/openscad.git
 
 This will download the latest sources into a directory named `openscad`.
 
@@ -138,15 +136,12 @@ To pull the MCAD library (https://github.com/openscad/MCAD), do the following:
     cd openscad
     git submodule update --init
 
-### Building for Mac OS X
+### Building for macOS
 
 Prerequisites:
 
 * Xcode
-* curl
-* cmake
-* pkgconfig
-* autoconf automake libtool (for HIDAPI / InputDevice support)
+* automake, libtool, cmake, pkg-config, wget (we recommend installing these using Homebrew)
 
 Install Dependencies:
 
@@ -237,12 +232,54 @@ For a 32-bit Windows cross-build, replace 64 with 32 in the above instructions.
 
 ### Compilation
 
-First, run `mkdir build && cd build && cmake ..` to generate a Makefile.
+First, run `mkdir build && cd build && cmake .. -DEXPERIMENTAL=1` to generate a Makefile.
 
-Then run `make`. Finally, on Linux you might run `make install` as root.
+Then run `make -j`. Finally, on Linux you might run `make install` as root.
 
 If you had problems compiling from source, raise a new issue in the
 [issue tracker on the github page](https://github.com/openscad/openscad/issues).
 
 This site and it's subpages can also be helpful:
 https://en.wikibooks.org/wiki/OpenSCAD_User_Manual/Building_OpenSCAD_from_Sources
+
+Once built, you can run tests with `cd build/tests && ctest -j`.
+
+### Running CI workflows locally
+
+*   Install [circleci-cli](https://circleci.com/docs/2.0/local-cli/) (you'll need an API key)
+
+    *Note*: we also use GitHub Workflows, but only to run tests on Windows (which we cross-build for in the Linux-based CircleCI workflows below). Also, [act](https://github.com/nektos/act) doesn't like our submodule setup anyway.
+
+*   Run the CI jobs
+
+	```bash
+	# When "successful", these will fail to upload at the very end of the workflow.
+	circleci local execute --job  openscad-mxe-64bit
+	circleci local execute --job  openscad-mxe-32bit
+	circleci local execute --job  openscad-appimage-64bit
+	```
+
+	*Note*: openscad-macos can't be built locally.
+
+*   If/when GCC gets randomly killed, give docker more RAM (e.g. 4GB per concurrent image you plan to run)
+
+*   To debug the jobs more interactively, you can go the manual route (inspect .circleci/config.yml to get the actual docker image you need)
+
+	```bash
+	docker run --entrypoint=/bin/bash -it openscad/mxe-x86_64-gui:latest
+	```
+
+	Then once you get the console:
+	
+	```bash
+	git clone https://github.com/%your username%/openscad.git workspace
+	cd workspace
+	git checkout %your branch%
+	git submodule init
+	git submodule update
+
+	# Then execute the commands from .circleci/config.yml:
+	#    export NUMCPU=2
+	#    ...
+	#    ./scripts/release-common.sh -snapshot -mingw64 -v "$OPENSCAD_VERSION"
+	```

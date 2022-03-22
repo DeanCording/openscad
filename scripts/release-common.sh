@@ -15,7 +15,7 @@
 #  -snapshot Build a snapshot binary (make e.g. experimental features available, build with commit info)
 #  -tests   Build additional package containing the regression tests
 #
-# If no version string or version date is given, todays date will be used (YYYY-MM-DD)
+# If no version string or version date is given, today's date will be used (YYYY-MM-DD)
 # If only version date is given, it will be used also as version string.
 # If no make target is given, release will be used on Windows, none one Mac OS X
 #
@@ -40,7 +40,7 @@ lf2crlf()
     mv $fname".temp" $fname
     return
   fi
-  echo 'warning- cant change eol to cr eol'
+  echo "warning- can't change eol to cr eol"
 }
 
 printUsage()
@@ -90,6 +90,7 @@ fi
 case $OS in
     MACOSX)
         . ./scripts/setenv-macos.sh
+        CMAKE_CONFIG="$CMAKE_CONFIG -DCMAKE_OSX_ARCHITECTURES=x86_64;arm64"
     ;;
     LINUX)
         TARGET=
@@ -216,20 +217,19 @@ case $OS in
         # make main openscad.exe
         cd $DEPLOYDIR
         if [ $FAKEMAKE ]; then
-            echo "notexe. debugging build process" > OpenSCAD.exe
+            echo "notexe. debugging build process" > openscad.exe
         else
             make -j$NUMCPU
         fi
-        if [ ! -e OpenSCAD.exe ]; then
-            echo "can't find OpenSCAD.exe. build failed. stopping."
+        if [ ! -e openscad.exe ]; then
+            echo "can't find openscad.exe. build failed. stopping."
             exit
         fi
-        if [ ! -e winconsole/OpenSCAD.com ]; then
-            echo "can't find OpenSCAD.com. build failed. stopping."
+        if [ ! -e winconsole/openscad.com ]; then
+            echo "can't find openscad.com. build failed. stopping."
             exit
         fi
-	mv -v OpenSCAD.exe openscad.exe
-	mv -v winconsole/OpenSCAD.com openscad.com
+	mv -v winconsole/openscad.com openscad.com
         cd $OPENSCADDIR
     ;;
     LINUX)

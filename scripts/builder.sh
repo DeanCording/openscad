@@ -189,7 +189,7 @@ build_win32()
 	if [ $DOSNAPSHOT ] ; then
 		./scripts/release-common.sh snapshot mingw32 tests
 	else
-		echo "this script cant yet build releases, only snapshots"
+		echo "this script can't yet build releases, only snapshots"
 		exit 1
 	fi
 	if [ $? -eq 0 ]; then
@@ -208,7 +208,7 @@ build_win64()
 	if [ $DOSNAPSHOT ] ; then
 		./scripts/release-common.sh snapshot mingw64 tests
 	else
-		echo "this script cant yet build releases, only snapshots"
+		echo "this script can't yet build releases, only snapshots"
 		exit 1
 	fi
 	if [ $? -eq 0 ]; then
@@ -226,7 +226,7 @@ build_lin32()
 	if [ $DOSNAPSHOT ] ; then
 		./scripts/release-common.sh snapshot
 	else
-		echo "this script cant yet build releases, only snapshots"
+		echo "this script can't yet build releases, only snapshots"
 		exit 1
 	fi
 }
@@ -355,9 +355,9 @@ update_win_www_download_links()
 	cd inc
 	echo `pwd`
 	# BASEURL='https://openscad.googlecode.com/files/'
-	BASEURL='http://files.openscad.org/'
+	BASEURL='https://files.openscad.org/'
 	if [ $DOSNAPSHOT ]; then
-		BASEURL='http://files.openscad.org/snapshots/'
+		BASEURL='https://files.openscad.org/snapshots/'
 	fi
 
 	mv win_snapshot_links.js win_snapshot_links.js.backup
