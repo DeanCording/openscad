@@ -24,15 +24,15 @@
  *
  */
 
-#include "offsetextrudenode.h"
+#include "OffsetExtrudeNode.h"
 
 #include "module.h"
 #include "ModuleInstantiation.h"
 #include "fileutils.h"
-#include "builtin.h"
-#include "polyset.h"
-#include "children.h"
-#include "parameters.h"
+#include "Builtins.h"
+#include "PolySet.h"
+#include "Children.h"
+#include "Parameters.h"
 
 #include <sstream>
 #include "boost-utils.h"
@@ -42,10 +42,10 @@ using namespace boost::assign; // bring 'operator+=()' into scope
 #include <boost/filesystem.hpp>
 namespace fs = boost::filesystem;
 
-static AbstractNode* builtin_offset_extrude(const ModuleInstantiation *inst, Arguments arguments, Children children)
+static std::shared_ptr<AbstractNode> builtin_offset_extrude(const ModuleInstantiation *inst, Arguments arguments, Children children)
 {
 
-	auto node = new OffsetExtrudeNode(inst);
+	auto node = std::make_shared<OffsetExtrudeNode>(inst);
 	// if height not given, and first argument is a number,
 	// then assume it should be the height.
 	bool first_argument_is_height = (arguments.size() > 0 && !arguments[0].name && arguments[0]->type() == Value::Type::NUMBER);

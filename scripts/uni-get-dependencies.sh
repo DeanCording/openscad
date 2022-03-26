@@ -145,7 +145,7 @@ get_ubuntu_16_deps()
 {
   apt-get -y install libxi-dev libxml2-dev libfontconfig1-dev
   # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=804539
-  apt-get -y install libcgal-qt5-dev
+  apt-get -y install libcgal-qt5-dev libopengl-dev
   get_debian_8_deps
 }
 

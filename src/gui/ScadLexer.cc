@@ -32,6 +32,7 @@ ScadLexer::ScadLexer(QObject *parent) : QsciLexerCPP(parent)
     "cube sphere cylinder polyhedron square circle polygon text "
     "minkowski hull resize child children echo union difference "
     "intersection linear_extrude rotate_extrude import group "
+    "offset_extrude "
     "projection render surface scale rotate mirror translate "
     "multmatrix color offset intersection_for roof";
 

@@ -831,22 +831,22 @@ fi
 # 
 # Some of these are defined in scripts/common-build-dependencies.sh
 
-build_eigen 3.3.7
-build_gmp 6.0.0
-build_mpfr 3.1.1
-build_boost 1.56.0
+#build_eigen 3.3.7
+#build_gmp 6.0.0
+#build_mpfr 3.1.1
+#build_boost 1.56.0
 # NB! For CGAL, also update the actual download URL in the function
-build_cgal 5.3
-build_glew 1.9.0
-build_opencsg 1.4.2
-build_gettext 0.18.3.1
-build_glib2 2.38.2
+build_cgal 5.4
+#build_glew 1.9.0
+#build_opencsg 1.4.2
+#build_gettext 0.18.3.1
+#build_glib2 2.38.2
 
 # the following are only needed for text()
-build_freetype 2.6.1 --without-png
-build_libxml2 2.9.1
-build_fontconfig 2.11.0 --with-add-fonts=/usr/X11R6/lib/X11/fonts,/usr/local/share/fonts
-build_ragel 6.9
-build_harfbuzz 0.9.35 --with-glib=yes
+#build_freetype 2.6.1 --without-png
+#build_libxml2 2.9.1
+#build_fontconfig 2.11.0 --with-add-fonts=/usr/X11R6/lib/X11/fonts,/usr/local/share/fonts
+#build_ragel 6.9
+#build_harfbuzz 0.9.35 --with-glib=yes
 
 echo "OpenSCAD dependencies built and installed to " $BASEDIR

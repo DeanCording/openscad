@@ -198,7 +198,7 @@ if (USE_MIMALLOC)
   set(MI_INSTALL_TOPLEVEL  OFF CACHE BOOL "" FORCE) # Install directly into $CMAKE_INSTALL_PREFIX instead of PREFIX/lib/mimalloc-version
 
   target_include_directories(OpenSCAD SYSTEM PRIVATE submodules/mimalloc/include)
-  add_subdirectory(submodules/mimalloc EXCLUDE_FROM_ALL)
+ # add_subdirectory(submodules/mimalloc EXCLUDE_FROM_ALL)
 
   if (MI_OVERRIDE)
     target_compile_definitions(OpenSCAD PRIVATE MI_OVERRIDE) # For preprocessor checks in our source.
@@ -633,7 +633,7 @@ set(CORE_SOURCES
   src/core/RoofNode.cc
   src/core/DrawingCallback.cc
   src/core/RotateExtrudeNode.cc
-  src/offsetextrude.cc
+  src/core/OffsetExtrudeNode.cc
   src/core/SurfaceNode.cc
   src/core/TextNode.cc
   src/core/TransformNode.cc
