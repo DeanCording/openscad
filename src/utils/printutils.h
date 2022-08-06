@@ -76,6 +76,8 @@ namespace OpenSCAD {
 extern std::string debug;
 extern bool quiet;
 extern bool hardwarnings;
+extern int traceDepth;
+extern bool traceUsermoduleParameters;
 extern bool parameterCheck;
 extern bool rangeCheck;
 }
@@ -171,6 +173,11 @@ private:
 public:
   template <typename ... Args>
   MessageClass(std::string&& fmt, Args&&... args) : fmt(std::forward<std::string>(fmt)), args(std::forward<Args>(args)...)
+  {
+  }
+
+  template <typename ... Args>
+  MessageClass(const std::string& fmt, Args&&... args) : fmt(fmt), args(std::forward<Args>(args)...)
   {
   }
 

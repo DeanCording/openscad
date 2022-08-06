@@ -2,12 +2,7 @@
 
 #include "system-gl.h"
 #include <QtGlobal>
-
-#ifdef USE_QOPENGLWIDGET
 #include <QOpenGLWidget>
-#else
-#include <QGLWidget>
-#endif
 #include <QLabel>
 
 #include <Eigen/Core>
@@ -15,13 +10,7 @@
 #include "GLView.h"
 #include "Renderer.h"
 
-class QGLView :
-#ifdef USE_QOPENGLWIDGET
-  public QOpenGLWidget,
-#else
-  public QGLWidget,
-#endif
-  public GLView
+class QGLView : public QOpenGLWidget, public GLView
 {
   Q_OBJECT
   Q_PROPERTY(bool showFaces READ showFaces WRITE setShowFaces);
@@ -52,19 +41,15 @@ public:
 public slots:
   void ZoomIn(void);
   void ZoomOut(void);
-#ifdef USE_QOPENGLWIDGET
-  inline void updateGL() { update(); }
-#endif
   void setMouseCentricZoom(bool var){
     this->mouseCentricZoom = var;
+  }
+  void setMouseSwapButtons(bool var){
+    this->mouseSwapButtons = var;
   }
 
 public:
   QLabel *statusLabel;
-
-#ifdef USE_QOPENGLWIDGET
-  inline QImage grabFrameBuffer() { return grabFramebuffer(); }
-#endif
 
   void zoom(double v, bool relative);
   void zoomCursor(int x, int y, int zoom);
@@ -78,6 +63,7 @@ private:
   bool mouse_drag_active;
   bool mouse_drag_moved = true;
   bool mouseCentricZoom = true;
+  bool mouseSwapButtons = false;
   QPoint last_mouse;
   QImage frame; // Used by grabFrame() and save()
 
@@ -100,6 +86,7 @@ private slots:
 #endif
 
 signals:
-  void doAnimateUpdate();
+  void cameraChanged();
+  void resized();
   void doSelectObject(QPoint screen_coordinate);
 };

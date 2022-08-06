@@ -174,6 +174,8 @@ QAction *getExport3DAction(const MainWindow *mainWindow) {
   const QString format = QString::fromStdString(Settings::Settings::toolbarExport3D.value());
   if (format == "STL") {
     return mainWindow->fileActionExportSTL;
+  } else if (format == "OBJ") {
+    return mainWindow->fileActionExportOBJ;
   } else if (format == "OFF") {
     return mainWindow->fileActionExportOFF;
   } else if (format == "WRL") {
@@ -238,9 +240,14 @@ MainWindow::MainWindow(const QStringList& filenames)
   consoleDockTitleWidget = new QWidget();
   parameterDockTitleWidget = new QWidget();
   errorLogDockTitleWidget = new QWidget();
+  animateDockTitleWidget = new QWidget();
+  viewportControlTitleWidget = new QWidget();
 
+  this->animateWidget->setMainWindow(this);
+  this->viewportControlWidget->setMainWindow(this);
   // actions not included in menu
   this->addAction(editActionInsertTemplate);
+  this->addAction(editActionFoldAll);
 
   this->editorDock->setConfigKey("view/hideEditor");
   this->editorDock->setAction(this->windowActionHideEditor);
@@ -250,6 +257,10 @@ MainWindow::MainWindow(const QStringList& filenames)
   this->parameterDock->setAction(this->windowActionHideCustomizer);
   this->errorLogDock->setConfigKey("view/hideErrorLog");
   this->errorLogDock->setAction(this->windowActionHideErrorLog);
+  this->animateDock->setConfigKey("view/hideAnimate");
+  this->animateDock->setAction(this->windowActionHideAnimate);
+  this->viewportControlDock->setConfigKey("view/hideViewportControl");
+  this->viewportControlDock->setAction(this->windowActionHideViewportControl);
 
   this->versionLabel = nullptr; // must be initialized before calling updateStatusBar()
   updateStatusBar(nullptr);
@@ -337,21 +348,14 @@ MainWindow::MainWindow(const QStringList& filenames)
 
   root_node = nullptr;
 
-  this->anim_step = 0;
-  this->anim_numsteps = 0;
-  this->anim_tval = 0.0;
-  this->anim_dumping = false;
-  this->anim_dump_start_step = 0;
-
   this->qglview->statusLabel = new QLabel(this);
   this->qglview->statusLabel->setMinimumWidth(100);
   statusBar()->addWidget(this->qglview->statusLabel);
 
   QSettingsCached settings;
   this->qglview->setMouseCentricZoom(Settings::Settings::mouseCentricZoom.value());
+  this->qglview->setMouseSwapButtons(Settings::Settings::mouseSwapButtons.value());
 
-  animate_timer = new QTimer(this);
-  connect(animate_timer, SIGNAL(timeout()), this, SLOT(updateTVal()));
 
   autoReloadTimer = new QTimer(this);
   autoReloadTimer->setSingleShot(false);
@@ -363,14 +367,9 @@ MainWindow::MainWindow(const QStringList& filenames)
   waitAfterReloadTimer->setInterval(autoReloadPollingPeriodMS);
   connect(waitAfterReloadTimer, SIGNAL(timeout()), this, SLOT(waitAfterReload()));
   connect(Preferences::inst(), SIGNAL(ExperimentalChanged()), this, SLOT(changeParameterWidget()));
-  connect(this->e_tval, SIGNAL(textChanged(QString)), this, SLOT(updatedAnimTval()));
-  connect(this->e_fps, SIGNAL(textChanged(QString)), this, SLOT(updatedAnimFps()));
-  connect(this->e_fsteps, SIGNAL(textChanged(QString)), this, SLOT(updatedAnimSteps()));
-  connect(this->e_dump, SIGNAL(toggled(bool)), this, SLOT(updatedAnimDump(bool)));
 
   progressThrottle->start();
 
-  animate_panel->hide();
   this->hideFind();
   frameCompileResult->hide();
   this->labelCompileResultMessage->setOpenExternalLinks(false);
@@ -439,6 +438,7 @@ MainWindow::MainWindow(const QStringList& filenames)
   connect(this->designActionDisplayCSGProducts, SIGNAL(triggered()), this, SLOT(actionDisplayCSGProducts()));
   connect(this->fileActionExportSTL, SIGNAL(triggered()), this, SLOT(actionExportSTL()));
   connect(this->fileActionExport3MF, SIGNAL(triggered()), this, SLOT(actionExport3MF()));
+  connect(this->fileActionExportOBJ, SIGNAL(triggered()), this, SLOT(actionExportOBJ()));
   connect(this->fileActionExportOFF, SIGNAL(triggered()), this, SLOT(actionExportOFF()));
   connect(this->fileActionExportWRL, SIGNAL(triggered()), this, SLOT(actionExportWRL()));
   connect(this->fileActionExportAMF, SIGNAL(triggered()), this, SLOT(actionExportAMF()));
@@ -480,7 +480,6 @@ MainWindow::MainWindow(const QStringList& filenames)
   connect(this->viewActionShowAxes, SIGNAL(triggered()), this, SLOT(viewModeShowAxes()));
   connect(this->viewActionShowCrosshairs, SIGNAL(triggered()), this, SLOT(viewModeShowCrosshairs()));
   connect(this->viewActionShowScaleProportional, SIGNAL(triggered()), this, SLOT(viewModeShowScaleProportional()));
-  connect(this->viewActionAnimate, SIGNAL(triggered()), this, SLOT(viewModeAnimate()));
   connect(this->viewActionTop, SIGNAL(triggered()), this, SLOT(viewAngleTop()));
   connect(this->viewActionBottom, SIGNAL(triggered()), this, SLOT(viewAngleBottom()));
   connect(this->viewActionLeft, SIGNAL(triggered()), this, SLOT(viewAngleLeft()));
@@ -501,6 +500,9 @@ MainWindow::MainWindow(const QStringList& filenames)
   connect(this->windowActionHideConsole, SIGNAL(triggered()), this, SLOT(hideConsole()));
   connect(this->windowActionHideCustomizer, SIGNAL(triggered()), this, SLOT(hideParameters()));
   connect(this->windowActionHideErrorLog, SIGNAL(triggered()), this, SLOT(hideErrorLog()));
+  connect(this->windowActionHideAnimate, SIGNAL(triggered()), this, SLOT(hideAnimate()));
+  connect(this->windowActionHideViewportControl, SIGNAL(triggered()), this, SLOT(hideViewportControl()));
+
   // Help menu
   connect(this->helpActionAbout, SIGNAL(triggered()), this, SLOT(helpAbout()));
   connect(this->helpActionHomepage, SIGNAL(triggered()), this, SLOT(helpHomepage()));
@@ -524,11 +526,14 @@ MainWindow::MainWindow(const QStringList& filenames)
   this->menuBar()->addMenu(AutoUpdater::updater()->updateMenu);
 #endif
 
-  connect(this->qglview, SIGNAL(doAnimateUpdate()), this, SLOT(animateUpdate()));
+  connect(this->qglview, SIGNAL(cameraChanged()), animateWidget, SLOT(cameraChanged()));
+  connect(this->qglview, SIGNAL(cameraChanged()), viewportControlWidget, SLOT(cameraChanged()));
+  connect(this->qglview, SIGNAL(resized()), viewportControlWidget, SLOT(viewResized()));
   connect(this->qglview, SIGNAL(doSelectObject(QPoint)), this, SLOT(selectObject(QPoint)));
 
-  connect(Preferences::inst(), SIGNAL(requestRedraw()), this->qglview, SLOT(updateGL()));
+  connect(Preferences::inst(), SIGNAL(requestRedraw()), this->qglview, SLOT(update()));
   connect(Preferences::inst(), SIGNAL(updateMouseCentricZoom(bool)), this->qglview, SLOT(setMouseCentricZoom(bool)));
+  connect(Preferences::inst(), SIGNAL(updateMouseSwapButtons(bool)), this->qglview, SLOT(setMouseSwapButtons(bool)));
   connect(Preferences::inst(), SIGNAL(updateReorderMode(bool)), this, SLOT(updateReorderMode(bool)));
   connect(Preferences::inst(), SIGNAL(updateUndockMode(bool)), this, SLOT(updateUndockMode(bool)));
   connect(Preferences::inst(), SIGNAL(openCSGSettingsChanged()), this, SLOT(openCSGSettingsChanged()));
@@ -562,58 +567,62 @@ MainWindow::MainWindow(const QStringList& filenames)
   addKeyboardShortCut(this->viewerToolBar->actions());
   addKeyboardShortCut(this->editortoolbar->actions());
 
-  InputDriverManager::instance()->registerActions(this->menuBar()->actions(), "");
   Preferences *instance = Preferences::inst();
-  instance->ButtonConfig->init();
 
-  initActionIcon(fileActionNew, ":/resources/icons/svg-default/new.svg", ":/resources/icons/svg-default/new-white.svg");
-  initActionIcon(fileActionOpen, ":/resources/icons/svg-default/open.svg", ":/resources/icons/svg-default/open-white.svg");
-  initActionIcon(fileActionSave, ":/resources/icons/svg-default/save.svg", ":/resources/icons/svg-default/save-white.svg");
-  initActionIcon(editActionZoomTextIn, ":/resources/icons/svg-default/zoom-text-in.svg", ":/resources/icons/svg-default/zoom-text-in-white.svg");
-  initActionIcon(editActionZoomTextOut, ":/resources/icons/svg-default/zoom-text-out.svg", ":/resources/icons/svg-default/zoom-text-out-white.svg");
-  initActionIcon(designActionRender, ":/resources/icons/svg-default/render.svg", ":/resources/icons/svg-default/render-white.svg");
-  initActionIcon(designAction3DPrint, ":/resources/icons/svg-default/send.svg", ":/resources/icons/svg-default/send-white.svg");
-  initActionIcon(viewActionShowAxes, ":/resources/icons/svg-default/axes.svg", ":/resources/icons/svg-default/axes-white.svg");
-  initActionIcon(viewActionShowEdges, ":/resources/icons/svg-default/show-edges.svg", ":/resources/icons/svg-default/show-edges-white.svg");
-  initActionIcon(viewActionZoomIn, ":/resources/icons/svg-default/zoom-in.svg", ":/resources/icons/svg-default/zoom-in-white.svg");
-  initActionIcon(viewActionZoomOut, ":/resources/icons/svg-default/zoom-out.svg", ":/resources/icons/svg-default/zoom-out-white.svg");
-  initActionIcon(viewActionTop, ":/resources/icons/svg-default/view-top.svg", ":/resources/icons/svg-default/view-top-white.svg");
-  initActionIcon(viewActionBottom, ":/resources/icons/svg-default/view-bottom.svg", ":/resources/icons/svg-default/view-bottom-white.svg");
-  initActionIcon(viewActionLeft, ":/resources/icons/svg-default/view-left.svg", ":/resources/icons/svg-default/view-left-white.svg");
-  initActionIcon(viewActionRight, ":/resources/icons/svg-default/view-right.svg", ":/resources/icons/svg-default/view-right-white.svg");
-  initActionIcon(viewActionFront, ":/resources/icons/svg-default/view-front.svg", ":/resources/icons/svg-default/view-front-white.svg");
-  initActionIcon(viewActionBack, ":/resources/icons/svg-default/view-back.svg", ":/resources/icons/svg-default/view-back-white.svg");
-  initActionIcon(viewActionSurfaces, ":/resources/icons/svg-default/surface.svg", ":/resources/icons/svg-default/surface-white.svg");
-  initActionIcon(viewActionWireframe, ":/resources/icons/svg-default/wireframe.svg", ":/resources/icons/svg-default/wireframe-white.svg");
-  initActionIcon(viewActionShowCrosshairs, ":/resources/icons/svg-default/crosshairs.svg", ":/resources/icons/svg-default/crosshairs-white.svg");
-  initActionIcon(viewActionThrownTogether, ":/resources/icons/svg-default/throwntogether.svg", ":/resources/icons/svg-default/throwntogether-white.svg");
-  initActionIcon(viewActionPerspective, ":/resources/icons/svg-default/perspective.svg", ":/resources/icons/svg-default/perspective-white.svg");
-  initActionIcon(viewActionOrthogonal, ":/resources/icons/svg-default/orthogonal.svg", ":/resources/icons/svg-default/orthogonal-white.svg");
-  initActionIcon(designActionPreview, ":/resources/icons/svg-default/preview.svg", ":/resources/icons/svg-default/preview-white.svg");
-  initActionIcon(viewActionAnimate, ":/resources/icons/svg-default/animate.svg", ":/resources/icons/svg-default/animate-white.svg");
-  initActionIcon(fileActionExportSTL, ":/resources/icons/svg-default/export-stl.svg", ":/resources/icons/svg-default/export-stl-white.svg");
-  initActionIcon(fileActionExportAMF, ":/resources/icons/svg-default/export-amf.svg", ":/resources/icons/svg-default/export-amf-white.svg");
-  initActionIcon(fileActionExport3MF, ":/resources/icons/svg-default/export-3mf.svg", ":/resources/icons/svg-default/export-3mf-white.svg");
-  initActionIcon(fileActionExportOFF, ":/resources/icons/svg-default/export-off.svg", ":/resources/icons/svg-default/export-off-white.svg");
-  initActionIcon(fileActionExportWRL, ":/resources/icons/svg-default/export-wrl.svg", ":/resources/icons/svg-default/export-wrl-white.svg");
-  initActionIcon(fileActionExportDXF, ":/resources/icons/svg-default/export-dxf.svg", ":/resources/icons/svg-default/export-dxf-white.svg");
-  initActionIcon(fileActionExportSVG, ":/resources/icons/svg-default/export-svg.svg", ":/resources/icons/svg-default/export-svg-white.svg");
-  initActionIcon(fileActionExportCSG, ":/resources/icons/svg-default/export-csg.svg", ":/resources/icons/svg-default/export-csg-white.svg");
-  initActionIcon(fileActionExportPDF, ":/resources/icons/svg-default/export-pdf.svg", ":/resources/icons/svg-default/export-pdf-white.svg");
-  initActionIcon(fileActionExportImage, ":/resources/icons/svg-default/export-png.svg", ":/resources/icons/svg-default/export-png-white.svg");
-  initActionIcon(viewActionViewAll, ":/resources/icons/svg-default/zoom-all.svg", ":/resources/icons/svg-default/zoom-all-white.svg");
-  initActionIcon(editActionUndo, ":/resources/icons/svg-default/undo.svg", ":/resources/icons/svg-default/undo-white.svg");
-  initActionIcon(editActionRedo, ":/resources/icons/svg-default/redo.svg", ":/resources/icons/svg-default/redo-white.svg");
-  initActionIcon(editActionUnindent, ":/resources/icons/svg-default/unindent.svg", ":/resources/icons/svg-default/unindent-white.svg");
-  initActionIcon(editActionIndent, ":/resources/icons/svg-default/indent.svg", ":/resources/icons/svg-default/indent-white.svg");
-  initActionIcon(viewActionResetView, ":/resources/icons/svg-default/reset-view.svg", ":/resources/icons/svg-default/reset-view-white.svg");
-  initActionIcon(viewActionShowScaleProportional, ":/resources/icons/svg-default/scalemarkers.svg", ":/resources/icons/svg-default/scalemarkers-white.svg");
+  initActionIcon(fileActionNew, ":/icons/svg-default/new.svg", ":/icons/svg-default/new-white.svg");
+  initActionIcon(fileActionOpen, ":/icons/svg-default/open.svg", ":/icons/svg-default/open-white.svg");
+  initActionIcon(fileActionSave, ":/icons/svg-default/save.svg", ":/icons/svg-default/save-white.svg");
+  initActionIcon(editActionZoomTextIn, ":/icons/svg-default/zoom-text-in.svg", ":/icons/svg-default/zoom-text-in-white.svg");
+  initActionIcon(editActionZoomTextOut, ":/icons/svg-default/zoom-text-out.svg", ":/icons/svg-default/zoom-text-out-white.svg");
+  initActionIcon(designActionRender, ":/icons/svg-default/render.svg", ":/icons/svg-default/render-white.svg");
+  initActionIcon(designAction3DPrint, ":/icons/svg-default/send.svg", ":/icons/svg-default/send-white.svg");
+  initActionIcon(viewActionShowAxes, ":/icons/svg-default/axes.svg", ":/icons/svg-default/axes-white.svg");
+  initActionIcon(viewActionShowEdges, ":/icons/svg-default/show-edges.svg", ":/icons/svg-default/show-edges-white.svg");
+  initActionIcon(viewActionZoomIn, ":/icons/svg-default/zoom-in.svg", ":/icons/svg-default/zoom-in-white.svg");
+  initActionIcon(viewActionZoomOut, ":/icons/svg-default/zoom-out.svg", ":/icons/svg-default/zoom-out-white.svg");
+  initActionIcon(viewActionTop, ":/icons/svg-default/view-top.svg", ":/icons/svg-default/view-top-white.svg");
+  initActionIcon(viewActionBottom, ":/icons/svg-default/view-bottom.svg", ":/icons/svg-default/view-bottom-white.svg");
+  initActionIcon(viewActionLeft, ":/icons/svg-default/view-left.svg", ":/icons/svg-default/view-left-white.svg");
+  initActionIcon(viewActionRight, ":/icons/svg-default/view-right.svg", ":/icons/svg-default/view-right-white.svg");
+  initActionIcon(viewActionFront, ":/icons/svg-default/view-front.svg", ":/icons/svg-default/view-front-white.svg");
+  initActionIcon(viewActionBack, ":/icons/svg-default/view-back.svg", ":/icons/svg-default/view-back-white.svg");
+  initActionIcon(viewActionSurfaces, ":/icons/svg-default/surface.svg", ":/icons/svg-default/surface-white.svg");
+  initActionIcon(viewActionWireframe, ":/icons/svg-default/wireframe.svg", ":/icons/svg-default/wireframe-white.svg");
+  initActionIcon(viewActionShowCrosshairs, ":/icons/svg-default/crosshairs.svg", ":/icons/svg-default/crosshairs-white.svg");
+  initActionIcon(viewActionThrownTogether, ":/icons/svg-default/throwntogether.svg", ":/icons/svg-default/throwntogether-white.svg");
+  initActionIcon(viewActionPerspective, ":/icons/svg-default/perspective.svg", ":/icons/svg-default/perspective-white.svg");
+  initActionIcon(viewActionOrthogonal, ":/icons/svg-default/orthogonal.svg", ":/icons/svg-default/orthogonal-white.svg");
+  initActionIcon(designActionPreview, ":/icons/svg-default/preview.svg", ":/icons/svg-default/preview-white.svg");
+  initActionIcon(fileActionExportSTL, ":/icons/svg-default/export-stl.svg", ":/icons/svg-default/export-stl-white.svg");
+  initActionIcon(fileActionExportAMF, ":/icons/svg-default/export-amf.svg", ":/icons/svg-default/export-amf-white.svg");
+  initActionIcon(fileActionExport3MF, ":/icons/svg-default/export-3mf.svg", ":/icons/svg-default/export-3mf-white.svg");
+  initActionIcon(fileActionExportOBJ, ":/icons/svg-default/export-obj.svg", ":/icons/svg-default/export-obj-white.svg");
+  initActionIcon(fileActionExportOFF, ":/icons/svg-default/export-off.svg", ":/icons/svg-default/export-off-white.svg");
+  initActionIcon(fileActionExportWRL, ":/icons/svg-default/export-wrl.svg", ":/icons/svg-default/export-wrl-white.svg");
+  initActionIcon(fileActionExportDXF, ":/icons/svg-default/export-dxf.svg", ":/icons/svg-default/export-dxf-white.svg");
+  initActionIcon(fileActionExportSVG, ":/icons/svg-default/export-svg.svg", ":/icons/svg-default/export-svg-white.svg");
+  initActionIcon(fileActionExportCSG, ":/icons/svg-default/export-csg.svg", ":/icons/svg-default/export-csg-white.svg");
+  initActionIcon(fileActionExportPDF, ":/icons/svg-default/export-pdf.svg", ":/icons/svg-default/export-pdf-white.svg");
+  initActionIcon(fileActionExportImage, ":/icons/svg-default/export-png.svg", ":/icons/svg-default/export-png-white.svg");
+  initActionIcon(viewActionViewAll, ":/icons/svg-default/zoom-all.svg", ":/icons/svg-default/zoom-all-white.svg");
+  initActionIcon(editActionUndo, ":/icons/svg-default/undo.svg", ":/icons/svg-default/undo-white.svg");
+  initActionIcon(editActionRedo, ":/icons/svg-default/redo.svg", ":/icons/svg-default/redo-white.svg");
+  initActionIcon(editActionUnindent, ":/icons/svg-default/unindent.svg", ":/icons/svg-default/unindent-white.svg");
+  initActionIcon(editActionIndent, ":/icons/svg-default/indent.svg", ":/icons/svg-default/indent-white.svg");
+  initActionIcon(viewActionResetView, ":/icons/svg-default/reset-view.svg", ":/icons/svg-default/reset-view-white.svg");
+  initActionIcon(viewActionShowScaleProportional, ":/icons/svg-default/scalemarkers.svg", ":/icons/svg-default/scalemarkers-white.svg");
+
+  InputDriverManager::instance()->registerActions(this->menuBar()->actions(), "", "");
+  InputDriverManager::instance()->registerActions(this->animateWidget->actions(), "animation", "animate");
+  instance->ButtonConfig->init();
 
   // fetch window states to be restored after restoreState() call
   bool hideConsole = settings.value("view/hideConsole").toBool();
   bool hideEditor = settings.value("view/hideEditor").toBool();
   bool hideCustomizer = settings.value("view/hideCustomizer").toBool();
   bool hideErrorLog = settings.value("view/hideErrorLog").toBool();
+  bool hideAnimate = settings.value("view/hideAnimate").toBool();
+  bool hideViewportControl = settings.value("view/hideViewportControl").toBool();
   bool hideEditorToolbar = settings.value("view/hideEditorToolbar").toBool();
   bool hide3DViewToolbar = settings.value("view/hide3DViewToolbar").toBool();
 
@@ -622,7 +631,7 @@ MainWindow::MainWindow(const QStringList& filenames)
   restoreState(windowState);
   resize(settings.value("window/size", QSize(800, 600)).toSize());
   move(settings.value("window/position", QPoint(0, 0)).toPoint());
-  updateWindowSettings(hideConsole, hideEditor, hideCustomizer, hideErrorLog, hideEditorToolbar, hide3DViewToolbar);
+  updateWindowSettings(hideConsole, hideEditor, hideCustomizer, hideErrorLog, hideEditorToolbar, hide3DViewToolbar, hideAnimate, hideViewportControl);
 
   if (windowState.size() == 0) {
     /*
@@ -662,6 +671,8 @@ MainWindow::MainWindow(const QStringList& filenames)
   connect(this->consoleDock, SIGNAL(topLevelChanged(bool)), this, SLOT(consoleTopLevelChanged(bool)));
   connect(this->parameterDock, SIGNAL(topLevelChanged(bool)), this, SLOT(parameterTopLevelChanged(bool)));
   connect(this->errorLogDock, SIGNAL(topLevelChanged(bool)), this, SLOT(errorLogTopLevelChanged(bool)));
+  connect(this->animateDock, SIGNAL(topLevelChanged(bool)), this, SLOT(animateTopLevelChanged(bool)));
+  connect(this->viewportControlDock, SIGNAL(topLevelChanged(bool)), this, SLOT(viewportControlTopLevelChanged(bool)));
 
   // display this window and check for OpenGL 2.0 (OpenCSG) support
   viewModeThrownTogether();
@@ -710,10 +721,14 @@ void MainWindow::openFileFromPath(QString path, int line)
   }
 }
 
+bool MainWindow::isLightTheme(){
+  int defaultcolor = viewerToolBar->palette().window().color().lightness();
+  return (defaultcolor > 165);
+}
+
 void MainWindow::initActionIcon(QAction *action, const char *darkResource, const char *lightResource)
 {
-  int defaultcolor = viewerToolBar->palette().window().color().lightness();
-  const char *resource = (defaultcolor > 165) ? darkResource : lightResource;
+  const char *resource = this->isLightTheme() ? darkResource : lightResource;
   action->setIcon(QIcon(resource));
 }
 
@@ -740,7 +755,7 @@ void MainWindow::addKeyboardShortCut(const QList<QAction *>& actions)
  * Qt call. So the values are loaded before the call and restored here
  * regardless of the (potential outdated) serialized state.
  */
-void MainWindow::updateWindowSettings(bool console, bool editor, bool customizer, bool errorLog, bool editorToolbar, bool viewToolbar)
+void MainWindow::updateWindowSettings(bool console, bool editor, bool customizer, bool errorLog, bool editorToolbar, bool viewToolbar, bool animate, bool viewportControl)
 {
   windowActionHideEditor->setChecked(editor);
   hideEditor();
@@ -750,6 +765,10 @@ void MainWindow::updateWindowSettings(bool console, bool editor, bool customizer
   hideErrorLog();
   windowActionHideCustomizer->setChecked(customizer);
   hideParameters();
+  windowActionHideAnimate->setChecked(animate);
+  hideAnimate();
+  windowActionHideViewportControl->setChecked(viewportControl);
+  hideViewportControl();
 
   viewActionHideEditorToolBar->setChecked(editorToolbar);
   hideEditorToolbar();
@@ -791,11 +810,21 @@ void MainWindow::onRotate2Event(InputEventRotate2 *event)
 
 void MainWindow::onActionEvent(InputEventAction *event)
 {
-  QAction *action = findAction(this->menuBar()->actions(), event->action);
-  if (action) {
-    action->trigger();
-  } else if ("viewActionTogglePerspective" == event->action) {
-    viewTogglePerspective();
+  std::string actionName = event->action;
+  if (actionName.find("::") == std::string::npos) {
+    QAction *action = findAction(this->menuBar()->actions(), actionName);
+    if (action) {
+      action->trigger();
+    } else if ("viewActionTogglePerspective" == actionName) {
+      viewTogglePerspective();
+    }
+  } else {
+    std::string target = actionName.substr(0, actionName.find("::"));
+    if("animate" == target) {
+      this->animateWidget->onActionEvent(event);
+    } else {
+      std::cout << "unknown onActionEvent target: " << actionName << std::endl;
+    }
   }
 }
 
@@ -855,23 +884,39 @@ void MainWindow::updateUndockMode(bool undockMode)
     consoleDock->setFeatures(consoleDock->features() | QDockWidget::DockWidgetFloatable);
     parameterDock->setFeatures(parameterDock->features() | QDockWidget::DockWidgetFloatable);
     errorLogDock->setFeatures(errorLogDock->features() | QDockWidget::DockWidgetFloatable);
+    animateDock->setFeatures(animateDock->features() | QDockWidget::DockWidgetFloatable);
+    viewportControlDock->setFeatures(viewportControlDock->features() | QDockWidget::DockWidgetFloatable);
+
   } else {
     if (editorDock->isFloating()) {
       editorDock->setFloating(false);
     }
     editorDock->setFeatures(editorDock->features() & ~QDockWidget::DockWidgetFloatable);
+
     if (consoleDock->isFloating()) {
       consoleDock->setFloating(false);
     }
     consoleDock->setFeatures(consoleDock->features() & ~QDockWidget::DockWidgetFloatable);
+
     if (parameterDock->isFloating()) {
       parameterDock->setFloating(false);
     }
     parameterDock->setFeatures(parameterDock->features() & ~QDockWidget::DockWidgetFloatable);
+
     if (errorLogDock->isFloating()) {
       errorLogDock->setFloating(false);
     }
     errorLogDock->setFeatures(errorLogDock->features() & ~QDockWidget::DockWidgetFloatable);
+
+    if (animateDock->isFloating()) {
+      animateDock->setFloating(false);
+    }
+    animateDock->setFeatures(animateDock->features() & ~QDockWidget::DockWidgetFloatable);
+
+    if (viewportControlDock->isFloating()) {
+      viewportControlDock->setFloating(false);
+    }
+    viewportControlDock->setFeatures(viewportControlDock->features() & ~QDockWidget::DockWidgetFloatable);
   }
 }
 
@@ -882,6 +927,8 @@ void MainWindow::updateReorderMode(bool reorderMode)
   consoleDock->setTitleBarWidget(reorderMode ? nullptr : consoleDockTitleWidget);
   parameterDock->setTitleBarWidget(reorderMode ? nullptr : parameterDockTitleWidget);
   errorLogDock->setTitleBarWidget(reorderMode ? nullptr : errorLogDockTitleWidget);
+  animateDock->setTitleBarWidget(reorderMode ? nullptr : animateDockTitleWidget);
+  viewportControlDock->setTitleBarWidget(reorderMode ? nullptr : viewportControlWidget);
 }
 
 MainWindow::~MainWindow()
@@ -963,76 +1010,14 @@ void MainWindow::setTabToolBarVisible(int count)
   tabToolBar->setVisible((tabCount > 1) && editorDock->isVisible());
 }
 
-void MainWindow::updatedAnimTval()
-{
-  bool t_ok;
-  double t = this->e_tval->text().toDouble(&t_ok);
-  // Clamp t to 0-1
-  if (t_ok) {
-    this->anim_tval = t < 0 ? 0.0 : ((t > 1.0) ? 1.0 : t);
-  } else {
-    this->anim_tval = 0.0;
-  }
-  emit actionRenderPreview();
-}
-
-void MainWindow::updatedAnimFps()
-{
-  bool fps_ok;
-  double fps = this->e_fps->text().toDouble(&fps_ok);
-  animate_timer->stop();
-  if (fps_ok && fps > 0 && this->anim_numsteps > 0) {
-    this->anim_step = int(this->anim_tval * this->anim_numsteps) % this->anim_numsteps;
-    animate_timer->setSingleShot(false);
-    animate_timer->setInterval(int(1000 / fps));
-    animate_timer->start();
-  }
-}
-
-void MainWindow::updatedAnimSteps()
-{
-  bool steps_ok;
-  int numsteps = this->e_fsteps->text().toInt(&steps_ok);
-  if (steps_ok) {
-    this->anim_numsteps = numsteps;
-    updatedAnimFps(); // Make sure we start
-  } else {
-    this->anim_numsteps = 0;
-  }
-  anim_dumping = false;
-}
-
-void MainWindow::updatedAnimDump(bool checked)
-{
-  if (!checked) this->anim_dumping = false;
-}
-
-// Only called from animate_timer
-void MainWindow::updateTVal()
-{
-  if (this->anim_numsteps == 0) return;
-
-  if (windowActionHideCustomizer->isVisible()) {
-    if (this->activeEditor->parameterWidget->childHasFocus()) return;
-  }
-
-  if (this->anim_numsteps > 1) {
-    this->anim_step = (this->anim_step + 1) % this->anim_numsteps;
-    this->anim_tval = 1.0 * this->anim_step / this->anim_numsteps;
-  } else if (this->anim_numsteps > 0) {
-    this->anim_step = 0;
-    this->anim_tval = 0.0;
-  }
-  const QString txt = QString::number(this->anim_tval, 'f', 5);
-  this->e_tval->setText(txt);
-}
-
 /*!
    compiles the design. Calls compileDone() if anything was compiled
  */
 void MainWindow::compile(bool reload, bool forcedone)
 {
   OpenSCAD::hardwarnings = Preferences::inst()->getValue("advanced/enableHardwarnings").toBool();
+  OpenSCAD::traceDepth = Preferences::inst()->getValue("advanced/traceDepth").toUInt();
+  OpenSCAD::traceUsermoduleParameters = Preferences::inst()->getValue("advanced/enableTraceUsermoduleParameters").toBool();
   OpenSCAD::parameterCheck = Preferences::inst()->getValue("advanced/enableParameterCheck").toBool();
   OpenSCAD::rangeCheck = Preferences::inst()->getValue("advanced/enableParameterRangeCheck").toBool();
 
@@ -1079,6 +1064,9 @@ void MainWindow::compile(bool reload, bool forcedone)
     no_exceptions_for_warnings();
     if (shouldcompiletoplevel) {
       this->errorLogWidget->clearModel();
+      if(Preferences::inst()->getValue("advanced/consoleAutoClear").toBool()){
+        this->console->actionClearConsole_triggered();
+      }
       if (activeEditor->isContentModified()) saveBackup();
       parseTopLevelDocument();
       didcompile = true;
@@ -1241,6 +1229,7 @@ void MainWindow::instantiateRoot()
     this->absolute_root_node = this->root_file->instantiate(*builtin_context, &file_context);
     if (file_context) {
       this->qglview->cam.updateView(file_context, false);
+      viewportControlWidget->cameraChanged();
     }
 
     if (this->absolute_root_node) {
@@ -1294,7 +1283,8 @@ void MainWindow::compileCSG()
     CSGTreeEvaluator csgrenderer(this->tree, &geomevaluator);
 #endif
 
-    progress_report_prep(this->root_node, report_func, this);
+    if (!isClosing) progress_report_prep(this->root_node, report_func, this);
+    else return;
     try {
 #ifdef ENABLE_OPENCSG
       this->processEvents();
@@ -1753,7 +1743,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 void MainWindow::setRenderVariables(ContextHandle<BuiltinContext>& context)
 {
   context->set_variable("$preview", Value(this->is_preview));
-  context->set_variable("$t", Value(this->anim_tval));
+  context->set_variable("$t", Value(this->animateWidget->getAnim_tval()));
   auto camVpt = qglview->cam.getVpt();
   context->set_variable("$vpt", Value(VectorType(context->session(), camVpt.x(), camVpt.y(), camVpt.z())));
   auto camVpr = qglview->cam.getVpr();
@@ -1805,6 +1795,7 @@ void MainWindow::parseTopLevelDocument()
   this->root_file = nullptr;  // ditto
   this->root_file = parse(this->parsed_file, fulltext, fname, fname, false) ? this->parsed_file : nullptr;
 
+  this->activeEditor->resetHighlighting();
   if (this->root_file != nullptr) {
     //add parameters as annotation in AST
     CommentParser::collectParameters(fulltext, this->root_file);
@@ -1905,7 +1896,7 @@ void MainWindow::actionRenderPreview()
   GuiLocker::lock();
   preview_requested = false;
 
-  prepareCompile("csgRender", !viewActionAnimate->isChecked(), true);
+  prepareCompile("csgRender", windowActionHideAnimate->isChecked(), true);
   compile(false, false);
   if (preview_requested) {
     // if the action was called when the gui was locked, we must request it one more time
@@ -1930,21 +1921,11 @@ void MainWindow::csgRender()
 #endif
   }
 
-  if (e_dump->isChecked() && animate_timer->isActive()) {
-    if (anim_dumping && anim_dump_start_step == anim_step) {
-      anim_dumping = false;
-      e_dump->setChecked(false);
-    } else {
-      if (!anim_dumping) {
-        anim_dumping = true;
-        anim_dump_start_step = anim_step;
-      }
-      // Force reading from front buffer. Some configurations will read from the back buffer here.
-      glReadBuffer(GL_FRONT);
-      QImage img = this->qglview->grabFrameBuffer();
-      QString filename = QString("frame%1.png").arg(this->anim_step, 5, 10, QChar('0'));
+  if ( animateWidget->dumpPictures() ) {
+      int steps = animateWidget->nextFrame();
+      QImage img = this->qglview->grabFrame();
+      QString filename = QString("frame%1.png").arg(steps, 5, 10, QChar('0'));
       img.save(filename, "PNG");
-    }
   }
 
   compileEnded();
@@ -2018,7 +1999,9 @@ void MainWindow::sendToOctoPrint()
 
   const QString fileFormat = QString::fromStdString(Settings::Settings::octoPrintFileFormat.value());
   FileFormat exportFileFormat{FileFormat::STL};
-  if (fileFormat == "OFF") {
+  if (fileFormat == "OBJ") {
+    exportFileFormat = FileFormat::OBJ;
+  } else if (fileFormat == "OFF") {
     exportFileFormat = FileFormat::OFF;
   } else if (fileFormat == "ASCIISTL") {
     exportFileFormat = FileFormat::ASCIISTL;
@@ -2158,7 +2141,8 @@ void MainWindow::cgalRender()
   this->progresswidget = new ProgressWidget(this);
   connect(this->progresswidget, SIGNAL(requestShow()), this, SLOT(showProgress()));
 
-  progress_report_prep(this->root_node, report_func, this);
+  if (!isClosing) progress_report_prep(this->root_node, report_func, this);
+  else return;
 
   this->cgalworker->start(this->tree);
 }
@@ -2194,7 +2178,7 @@ void MainWindow::actionRenderDone(shared_ptr<const Geometry> root_geom)
   const bool renderSoundEnabled = Preferences::inst()->getValue("advanced/enableSoundNotification").toBool();
   const uint soundThreshold = Preferences::inst()->getValue("advanced/timeThresholdOnRenderCompleteSound").toUInt();
   if (renderSoundEnabled && soundThreshold <= renderStatistic.ms().count() / 1000) {
-    QSound::play(":sounds/complete.wav");
+    QSound::play(":/sounds/complete.wav");
   }
 
   renderedEditor = activeEditor;
@@ -2522,9 +2506,9 @@ void MainWindow::actionExport(FileFormat, QString, QString, unsigned int, QStrin
   this->export_paths[suffix] = exportFilename;
 
   ExportInfo exportInfo = createExportInfo(format, exportFilename, activeEditor->filepath);
-  exportFileByName(this->root_geom, exportInfo);
+  bool exportResult = exportFileByName(this->root_geom, exportInfo);
 
-  fileExportedMessage(type_name, exportFilename);
+  if (exportResult) fileExportedMessage(type_name, exportFilename);
   clearCurrentOutput();
 #endif /* ENABLE_CGAL */
 }
@@ -2541,6 +2525,11 @@ void MainWindow::actionExportSTL()
 void MainWindow::actionExport3MF()
 {
   actionExport(FileFormat::_3MF, "3MF", ".3mf", 3);
+}
+
+void MainWindow::actionExportOBJ()
+{
+  actionExport(FileFormat::OBJ, "OBJ", ".obj", 3);
 }
 
 void MainWindow::actionExportOFF()
@@ -2612,11 +2601,15 @@ void MainWindow::actionExportImage()
   auto img_filename = QFileDialog::getSaveFileName(this,
                                                    _("Export Image"),  exportPath(suffix), _("PNG Files (*.png)"));
   if (!img_filename.isEmpty()) {
-    qglview->save(img_filename.toLocal8Bit().constData());
-    this->export_paths[suffix] = img_filename;
-    setCurrentOutput();
-    fileExportedMessage("PNG", img_filename);
-    clearCurrentOutput();
+    bool saveResult = qglview->save(img_filename.toLocal8Bit().constData());
+    if (saveResult) {
+      this->export_paths[suffix] = img_filename;
+      setCurrentOutput();
+      fileExportedMessage("PNG", img_filename);
+      clearCurrentOutput();
+    } else {
+        LOG(message_group::None, Location::NONE, "", "Can't open file \"%1$s\" for export image", img_filename.toLocal8Bit().constData());
+    }
   }
 }
 
@@ -2664,7 +2657,7 @@ void MainWindow::viewModePreview()
     viewActionPreview->setChecked(true);
     this->qglview->setRenderer(this->opencsgRenderer ? (Renderer *)this->opencsgRenderer : (Renderer *)this->thrownTogetherRenderer);
     this->qglview->updateColorScheme();
-    this->qglview->updateGL();
+    this->qglview->update();
   } else {
     viewModeThrownTogether();
   }
@@ -2681,7 +2674,7 @@ void MainWindow::viewModeSurface()
   this->qglview->setShowFaces(true);
   this->qglview->setRenderer(this->cgalRenderer);
   this->qglview->updateColorScheme();
-  this->qglview->updateGL();
+  this->qglview->update();
 }
 
 void MainWindow::viewModeWireframe()
@@ -2691,7 +2684,7 @@ void MainWindow::viewModeWireframe()
   this->qglview->setShowFaces(false);
   this->qglview->setRenderer(this->cgalRenderer);
   this->qglview->updateColorScheme();
-  this->qglview->updateGL();
+  this->qglview->update();
 }
 
 #endif /* ENABLE_CGAL */
@@ -2702,7 +2695,7 @@ void MainWindow::viewModeThrownTogether()
   viewActionThrownTogether->setChecked(true);
   this->qglview->setRenderer(this->thrownTogetherRenderer);
   this->qglview->updateColorScheme();
-  this->qglview->updateGL();
+  this->qglview->update();
 }
 
 void MainWindow::viewModeShowEdges()
@@ -2710,7 +2703,7 @@ void MainWindow::viewModeShowEdges()
   QSettingsCached settings;
   settings.setValue("view/showEdges", viewActionShowEdges->isChecked());
   this->qglview->setShowEdges(viewActionShowEdges->isChecked());
-  this->qglview->updateGL();
+  this->qglview->update();
 }
 
 void MainWindow::viewModeShowAxes()
@@ -2720,7 +2713,7 @@ void MainWindow::viewModeShowAxes()
   settings.setValue("view/showAxes", showaxes);
   this->viewActionShowScaleProportional->setEnabled(showaxes);
   this->qglview->setShowAxes(showaxes);
-  this->qglview->updateGL();
+  this->qglview->update();
 }
 
 void MainWindow::viewModeShowCrosshairs()
@@ -2728,7 +2721,7 @@ void MainWindow::viewModeShowCrosshairs()
   QSettingsCached settings;
   settings.setValue("view/showCrosshairs", viewActionShowCrosshairs->isChecked());
   this->qglview->setShowCrosshairs(viewActionShowCrosshairs->isChecked());
-  this->qglview->updateGL();
+  this->qglview->update();
 }
 
 void MainWindow::viewModeShowScaleProportional()
@@ -2736,19 +2729,7 @@ void MainWindow::viewModeShowScaleProportional()
   QSettingsCached settings;
   settings.setValue("view/showScaleProportional", viewActionShowScaleProportional->isChecked());
   this->qglview->setShowScaleProportional(viewActionShowScaleProportional->isChecked());
-  this->qglview->updateGL();
-}
-
-void MainWindow::viewModeAnimate()
-{
-  if (viewActionAnimate->isChecked()) {
-    animate_panel->show();
-    actionRenderPreview();
-    updatedAnimFps();
-  } else {
-    animate_panel->hide();
-    animate_timer->stop();
-  }
+  this->qglview->update();
 }
 
 bool MainWindow::isEmpty()
@@ -2756,74 +2737,60 @@ bool MainWindow::isEmpty()
   return activeEditor->toPlainText().isEmpty();
 }
 
-void MainWindow::animateUpdateDocChanged()
+void MainWindow::editorContentChanged()
 {
   auto current_doc = activeEditor->toPlainText();
   if (current_doc != last_compiled_doc) {
-    animateUpdate();
-  }
-}
-
-void MainWindow::animateUpdate()
-{
-  if (animate_panel->isVisible()) {
-    bool fps_ok;
-    double fps = this->e_fps->text().toDouble(&fps_ok);
-    if (fps_ok && fps <= 0 && !animate_timer->isActive()) {
-      animate_timer->stop();
-      animate_timer->setSingleShot(true);
-      animate_timer->setInterval(50);
-      animate_timer->start();
-    }
+    animateWidget->editorContentChanged();
   }
 }
 
 void MainWindow::viewAngleTop()
 {
   qglview->cam.object_rot << 90, 0, 0;
-  this->qglview->updateGL();
+  this->qglview->update();
 }
 
 void MainWindow::viewAngleBottom()
 {
   qglview->cam.object_rot << 270, 0, 0;
-  this->qglview->updateGL();
+  this->qglview->update();
 }
 
 void MainWindow::viewAngleLeft()
 {
   qglview->cam.object_rot << 0, 0, 90;
-  this->qglview->updateGL();
+  this->qglview->update();
 }
 
 void MainWindow::viewAngleRight()
 {
   qglview->cam.object_rot << 0, 0, 270;
-  this->qglview->updateGL();
+  this->qglview->update();
 }
 
 void MainWindow::viewAngleFront()
 {
   qglview->cam.object_rot << 0, 0, 0;
-  this->qglview->updateGL();
+  this->qglview->update();
 }
 
 void MainWindow::viewAngleBack()
 {
   qglview->cam.object_rot << 0, 0, 180;
-  this->qglview->updateGL();
+  this->qglview->update();
 }
 
 void MainWindow::viewAngleDiagonal()
 {
   qglview->cam.object_rot << 35, 0, -25;
-  this->qglview->updateGL();
+  this->qglview->update();
 }
 
 void MainWindow::viewCenter()
 {
   qglview->cam.object_trans << 0, 0, 0;
-  this->qglview->updateGL();
+  this->qglview->update();
 }
 
 void MainWindow::viewPerspective()
@@ -2833,7 +2800,7 @@ void MainWindow::viewPerspective()
   viewActionPerspective->setChecked(true);
   viewActionOrthogonal->setChecked(false);
   this->qglview->setOrthoMode(false);
-  this->qglview->updateGL();
+  this->qglview->update();
 }
 
 void MainWindow::viewOrthogonal()
@@ -2843,7 +2810,7 @@ void MainWindow::viewOrthogonal()
   viewActionPerspective->setChecked(false);
   viewActionOrthogonal->setChecked(true);
   this->qglview->setOrthoMode(true);
-  this->qglview->updateGL();
+  this->qglview->update();
 }
 
 void MainWindow::viewTogglePerspective()
@@ -2858,13 +2825,13 @@ void MainWindow::viewTogglePerspective()
 void MainWindow::viewResetView()
 {
   this->qglview->resetView();
-  this->qglview->updateGL();
+  this->qglview->update();
 }
 
 void MainWindow::viewAll()
 {
   this->qglview->viewAll();
-  this->qglview->updateGL();
+  this->qglview->update();
 }
 
 void MainWindow::on_editorDock_visibilityChanged(bool)
@@ -2887,6 +2854,16 @@ void MainWindow::on_parameterDock_visibilityChanged(bool)
 void MainWindow::on_errorLogDock_visibilityChanged(bool)
 {
   errorLogTopLevelChanged(errorLogDock->isFloating());
+}
+
+void MainWindow::on_animateDock_visibilityChanged(bool)
+{
+  animateTopLevelChanged(animateDock->isFloating());
+}
+
+void MainWindow::on_viewportControlDock_visibilityChanged(bool)
+{
+  viewportControlTopLevelChanged(viewportControlDock->isFloating());
 }
 
 void MainWindow::changedTopLevelEditor(bool topLevel)
@@ -2941,6 +2918,34 @@ void MainWindow::errorLogTopLevelChanged(bool topLevel)
   if (topLevel) {
     errorLogDock->setWindowFlags(flags);
     errorLogDock->show();
+  }
+}
+
+void MainWindow::changedTopLevelAnimate(bool topLevel)
+{
+  setDockWidgetTitle(animateDock, QString(_("Animate")), topLevel);
+}
+
+
+void MainWindow::animateTopLevelChanged(bool topLevel)
+{
+  setDockWidgetTitle(animateDock, QString(_("Animate")), topLevel);
+
+  Qt::WindowFlags flags = (animateDock->windowFlags() & ~Qt::WindowType_Mask) | Qt::Window;
+  if (topLevel) {
+    animateDock->setWindowFlags(flags);
+    animateDock->show();
+  }
+}
+
+void MainWindow::viewportControlTopLevelChanged(bool topLevel)
+{
+  setDockWidgetTitle(viewportControlDock, QString(_("Viewport-Control")), topLevel);
+
+  Qt::WindowFlags flags = (viewportControlDock->windowFlags() & ~Qt::WindowType_Mask) | Qt::Window;
+  if (topLevel) {
+    viewportControlDock->setWindowFlags(flags);
+    viewportControlDock->show();
   }
 }
 
@@ -3054,6 +3059,41 @@ void MainWindow::hideErrorLog()
   }
 }
 
+void MainWindow::showAnimate()
+{
+  windowActionHideAnimate->setChecked(false);
+  animateDock->show();
+  animateDock->raise();
+  animateWidget->setFocus();
+}
+
+void MainWindow::hideAnimate()
+{
+  if (windowActionHideAnimate->isChecked()) {
+    animateDock->hide();
+  } else {
+    animateDock->show();
+  }
+}
+
+void MainWindow::showViewportControl()
+{
+  windowActionHideViewportControl->setChecked(false);
+  viewportControlDock->show();
+  viewportControlDock->raise();
+  viewportControlWidget->setFocus();
+}
+
+void MainWindow::hideViewportControl()
+{
+  if (windowActionHideViewportControl->isChecked()) {
+    viewportControlDock->hide();
+  } else {
+    viewportControlDock->show();
+  }
+}
+
+
 void MainWindow::showParameters()
 {
   windowActionHideCustomizer->setChecked(false);
@@ -3086,6 +3126,16 @@ void MainWindow::on_windowActionSelectErrorLog_triggered()
   showErrorLog();
 }
 
+void MainWindow::on_windowActionSelectAnimate_triggered()
+{
+  showAnimate();
+}
+
+void MainWindow::on_windowActionSelectViewportControl_triggered()
+{
+  showViewportControl();
+}
+
 void MainWindow::on_windowActionSelectCustomizer_triggered()
 {
   showParameters();
@@ -3106,13 +3156,20 @@ void MainWindow::on_editActionInsertTemplate_triggered()
   activeEditor->displayTemplates();
 }
 
+void MainWindow::on_editActionFoldAll_triggered()
+{
+  activeEditor->foldUnfold();
+}
+
 void MainWindow::activateWindow(int offset)
 {
-  const std::array<DockFocus, 4> docks = {{
+  const std::array<DockFocus, 6> docks = {{
     { editorDock, &MainWindow::on_windowActionSelectEditor_triggered },
     { consoleDock, &MainWindow::on_windowActionSelectConsole_triggered },
     { errorLogDock, &MainWindow::on_windowActionSelectErrorLog_triggered },
     { parameterDock, &MainWindow::on_windowActionSelectCustomizer_triggered },
+    { animateDock, &MainWindow::on_windowActionSelectAnimate_triggered },
+    { viewportControlDock, &MainWindow::on_windowActionSelectViewportControl_triggered },
   }};
 
   const int cnt = docks.size();
@@ -3220,6 +3277,8 @@ void MainWindow::helpFontInfo()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
   if (tabManager->shouldClose()) {
+    isClosing=true;
+    progress_report_fin();
     // Disable invokeMethod calls for consoleOutput during shutdown,
     // otherwise will segfault if echos are in progress.
     hideCurrentOutput();
@@ -3252,7 +3311,7 @@ void MainWindow::setColorScheme(const QString& scheme)
 {
   RenderSettings::inst()->colorscheme = scheme.toStdString();
   this->qglview->setColorScheme(scheme.toStdString());
-  this->qglview->updateGL();
+  this->qglview->update();
 }
 
 void MainWindow::setFont(const QString& family, uint size)

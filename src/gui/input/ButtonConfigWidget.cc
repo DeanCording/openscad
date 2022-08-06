@@ -30,7 +30,7 @@
 #include "QSettingsCached.h"
 #include "input/InputDriverManager.h"
 #include "SettingsWriter.h"
-#include "WheelIgnorer.h"
+#include "IgnoreWheelWhenNotFocused.h"
 
 ButtonConfigWidget::ButtonConfigWidget(QWidget *parent) : QWidget(parent)
 {
@@ -43,7 +43,6 @@ ButtonConfigWidget::~ButtonConfigWidget()
 
 void ButtonConfigWidget::updateButtonState(int nr, bool pressed) const {
   QString style = pressed ? ButtonConfigWidget::ActiveStyleString : ButtonConfigWidget::EmptyString;
-  std::string number = std::to_string(nr);
 
   auto label = this->findChild<QLabel *>(QString("labelInputButton%1").arg(nr));
   if (label == nullptr) return;
@@ -58,14 +57,7 @@ void ButtonConfigWidget::init() {
     }
   }
 
-  auto comboBoxes = this->findChildren<QComboBox *>();
-  if (comboBoxes.size() > 0) {  // only allocate if there are comboboxes to use the function
-    auto wheelIgnorer = new WheelIgnorer(this);
-    for (auto comboBox : comboBoxes) {
-      comboBox->installEventFilter(wheelIgnorer); // this takes ownership of the wheelIgnorer object
-    }
-  }
-  // clang generates a bogus warning that wheelIgnorer may be leaked
+  installIgnoreWheelWhenNotFocused(this);
 
   initialized = true;
 }

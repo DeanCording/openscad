@@ -106,7 +106,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../openscad.qrc">
+             <iconset resource="../../resources/common.qrc">
               <normaloff>:/icons/close.png</normaloff>:/icons/close.png</iconset>
             </property>
             <property name="iconSize">
@@ -132,7 +132,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../openscad.qrc">
+             <iconset resource="../../resources/common.qrc">
               <normaloff>:/icons/information-icons-error.png</normaloff>:/icons/information-icons-error.png</iconset>
             </property>
             <property name="iconSize">
@@ -166,73 +166,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QFrame" name="animate_panel">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <property name="lineWidth">
-          <number>0</number>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayoutAnimate">
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="QLabel" name="label_time">
-            <property name="text">
-             <string>Time:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="e_tval"/>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_fps">
-            <property name="text">
-             <string>FPS:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="e_fps"/>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_steps">
-            <property name="text">
-             <string>Steps:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="e_fsteps"/>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="e_dump">
-            <property name="text">
-             <string>Dump Pictures</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
         <widget class="QToolBar" name="viewerToolBar">
          <addaction name="designActionPreview"/>
          <addaction name="designActionRender"/>
@@ -258,7 +191,6 @@
         </widget>
        </item>
       </layout>
-      <zorder>animate_panel</zorder>
       <zorder>qglview</zorder>
       <zorder>viewerToolBar</zorder>
       <zorder>frameCompileResult</zorder>
@@ -294,6 +226,7 @@
       <string>E&amp;xport</string>
      </property>
      <addaction name="fileActionExportSTL"/>
+     <addaction name="fileActionExportOBJ"/>
      <addaction name="fileActionExportOFF"/>
      <addaction name="fileActionExportWRL"/>
      <addaction name="fileActionExportAMF"/>
@@ -396,7 +329,6 @@
     <addaction name="viewActionShowAxes"/>
     <addaction name="viewActionShowScaleProportional"/>
     <addaction name="viewActionShowCrosshairs"/>
-    <addaction name="viewActionAnimate"/>
     <addaction name="separator"/>
     <addaction name="viewActionTop"/>
     <addaction name="viewActionBottom"/>
@@ -439,6 +371,8 @@
     <addaction name="windowActionSelectConsole"/>
     <addaction name="windowActionSelectErrorLog"/>
     <addaction name="windowActionSelectCustomizer"/>
+    <addaction name="windowActionSelectAnimate"/>
+    <addaction name="windowActionSelectViewportControl"/>
     <addaction name="separator"/>
     <addaction name="windowActionNextWindow"/>
     <addaction name="windowActionPreviousWindow"/>
@@ -447,6 +381,8 @@
     <addaction name="windowActionHideConsole"/>
     <addaction name="windowActionHideErrorLog"/>
     <addaction name="windowActionHideCustomizer"/>
+    <addaction name="windowActionHideAnimate"/>
+    <addaction name="windowActionHideViewportControl"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
@@ -690,6 +626,62 @@
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
+  </widget>
+  <widget class="Dock" name="animateDock">
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="animateDockContents">
+    <property name="focusPolicy">
+     <enum>Qt::StrongFocus</enum>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_Animate">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="Animate" name="animateWidget" native="true">
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="Dock" name="viewportControlDock">
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="viewportControlDockContents">
+    <property name="focusPolicy">
+     <enum>Qt::StrongFocus</enum>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_ViewportControl">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="ViewportControl" name="viewportControlWidget" native="true">
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="Dock" name="errorLogDock">
    <attribute name="dockWidgetArea">
@@ -1012,6 +1004,11 @@
     <string>F7</string>
    </property>
   </action>
+  <action name="fileActionExportOBJ">
+   <property name="text">
+    <string>Export as &amp;OBJ...</string>
+   </property>
+  </action>
   <action name="fileActionExportOFF">
    <property name="text">
     <string>Export as &amp;OFF...</string>
@@ -1105,14 +1102,6 @@
    </property>
    <property name="text">
     <string>Show Scale Markers</string>
-   </property>
-  </action>
-  <action name="viewActionAnimate">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Animate</string>
    </property>
   </action>
   <action name="viewActionTop">
@@ -1478,6 +1467,34 @@
     <string>Hide ErrorLog</string>
    </property>
   </action>
+  <action name="windowActionHideAnimate">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide Animation Toolbar/Window</string>
+   </property>
+   <property name="toolTip">
+    <string>Hide Animation Toolbar/Window</string>
+   </property>
+  </action>
+  <action name="windowActionHideViewportControl">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide Viewport-Control</string>
+   </property>
+   <property name="toolTip">
+    <string>Hide Viewport-Control</string>
+   </property>
+  </action>
   <action name="windowActionSelectEditor">
    <property name="text">
     <string>&amp;Editor</string>
@@ -1498,6 +1515,16 @@
     <string>Error &amp;Log</string>
    </property>
   </action>
+  <action name="windowActionSelectAnimate">
+   <property name="text">
+    <string>&amp;Animate</string>
+   </property>
+  </action>
+  <action name="windowActionSelectViewportControl">
+   <property name="text">
+    <string>Viewport-Control</string>
+   </property>
+  </action>
   <action name="windowActionNextWindow">
    <property name="text">
     <string>&amp;Next Window</string>
@@ -1514,6 +1541,11 @@
    </property>
    <property name="shortcut">
     <string>Alt+Ins</string>
+   </property>
+  </action>
+  <action name="editActionFoldAll">
+   <property name="text">
+    <string>Fold/Unfoll All</string>
    </property>
   </action>
  </widget>
@@ -1553,9 +1585,21 @@
    <header>gui/ErrorLog.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>Animate</class>
+   <extends>QWidget</extends>
+   <header>gui/Animate.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ViewportControl</class>
+   <extends>QWidget</extends>
+   <header>gui/ViewportControl.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources>
-  <include location="../openscad.qrc"/>
+  <include location="../../resources/common.qrc"/>
  </resources>
  <connections/>
 </ui>

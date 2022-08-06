@@ -344,14 +344,23 @@ target_include_directories(OpenSCAD SYSTEM PRIVATE ${LIBXML2_INCLUDE_DIR})
 list(APPEND COMMON_LIBRARIES ${LIBXML2_LIBRARIES})
 
 option(ENABLE_HIDAPI "Enable support for HIDAPI input driver." ON)
+option(ALLOW_BUNDLED_HIDAPI "Allow usage of bundled HIDAPI library (Windows only)." OFF)
 if(ENABLE_HIDAPI)
   find_package(HidAPI 0.10 QUIET)
   if(HIDAPI_FOUND)
-    message(STATUS "HidAPI: ${HIDAPI_VERSION_STRING}")
     set(INPUT_DRIVER_HIDAPI_SOURCES src/gui/input/HidApiInputDriver.cc)
     target_include_directories(OpenSCAD SYSTEM PRIVATE ${HIDAPI_INCLUDE_DIR})
     list(APPEND COMMON_LIBRARIES ${HIDAPI_LIBRARY})
     target_compile_definitions(OpenSCAD PRIVATE ENABLE_HIDAPI)
+    message(STATUS "HidAPI: ${HIDAPI_VERSION_STRING}")
+  elseif(ALLOW_BUNDLED_HIDAPI)
+    set(HIDAPI_SRC_DIR "src/ext/hidapi")
+    file(STRINGS "${HIDAPI_SRC_DIR}/VERSION" HIDAPI_VERSION_STRING)
+    target_include_directories(OpenSCAD SYSTEM PRIVATE "${HIDAPI_SRC_DIR}")
+    set(INPUT_DRIVER_HIDAPI_SOURCES "${HIDAPI_SRC_DIR}/hid.c" src/gui/input/HidApiInputDriver.cc)
+    target_compile_definitions(OpenSCAD PRIVATE ENABLE_HIDAPI)
+    list(APPEND PLATFORM_LIBS -lsetupapi -lhid)
+    message(STATUS "HidAPI: ${HIDAPI_VERSION_STRING} (bundled)")
   else()
     message(STATUS "HIDAPI: disabled")
   endif()
@@ -448,6 +457,7 @@ if(NOT HEADLESS)
   set_property(TARGET OpenSCAD PROPERTY AUTOUIC ON)
   set_property(TARGET OpenSCAD PROPERTY AUTORCC ON)
   set_property(TARGET OpenSCAD PROPERTY AUTOUIC_OPTIONS --tr q_)
+  set_property(TARGET OpenSCAD PROPERTY AUTORCC_OPTIONS --threshold 10 --compress 9)
   find_package(Qt5 5.4 COMPONENTS Core Widgets Multimedia OpenGL Concurrent Network Svg REQUIRED QUIET)
   message(STATUS "Qt5: ${Qt5_VERSION}")
 
@@ -681,6 +691,7 @@ set(CORE_SOURCES
   src/io/export_3mf.cc
   src/io/export_amf.cc
   src/io/export_dxf.cc
+  src/io/export_obj.cc
   src/io/export_off.cc
   src/io/export_wrl.cc
   src/io/export_pdf.cc
@@ -797,6 +808,7 @@ set(GUI_SOURCES
   ${GUI_SOURCES}
   src/gui/AutoUpdater.cc
   src/gui/CGALWorker.cc
+  src/gui/ViewportControl.cc
   src/gui/Console.cc
   src/gui/Dock.cc
   src/gui/Editor.cc
@@ -808,6 +820,7 @@ set(GUI_SOURCES
   src/gui/LaunchingScreen.cc
   src/gui/LibraryInfoDialog.cc
   src/gui/MainWindow.cc
+  src/gui/Animate.cc
   src/gui/MouseSelector.cc
   src/gui/OctoPrint.cc
   src/gui/OpenCSGWarningDialog.cc
@@ -828,14 +841,13 @@ set(GUI_SOURCES
   src/gui/TabWidget.cc
   src/gui/UIUtils.cc
   src/gui/WindowManager.cc
+  src/gui/IgnoreWheelWhenNotFocused.cc
   src/gui/input/AxisConfigWidget.cc
   src/gui/input/ButtonConfigWidget.cc
   src/gui/input/InputDriver.cc
   src/gui/input/InputDriverManager.cc
   src/gui/input/InputEventMapper.cc
-  src/gui/input/WheelIgnorer.cc
   src/gui/parameter/GroupWidget.cc
-  src/gui/parameter/IgnoreWheelWhenNotFocused.cc
   src/gui/parameter/ParameterCheckBox.cc
   src/gui/parameter/ParameterComboBox.cc
   src/gui/parameter/ParameterSlider.cc
@@ -854,24 +866,31 @@ set(GUI_HEADERS
   src/gui/NetworkSignal.h
   )
 
-file(GLOB Resources *.qrc)
+list(APPEND Sources src/openscad.cc ${CORE_SOURCES} ${CGAL_SOURCES} ${OFFSCREEN_SOURCES})
 
-list(APPEND Sources src/openscad.cc ${CORE_SOURCES} ${CGAL_SOURCES} ${OFFSCREEN_SOURCES} ${Resources})
+set(RESOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/resources)
 if(HEADLESS)
   target_compile_definitions(OpenSCAD PRIVATE OPENSCAD_NOGUI)
 else()
+  list(APPEND RESOURCE_FILES ${RESOURCE_DIR}/common.qrc)
   list(APPEND Sources ${GUI_SOURCES} ${GUI_HEADERS})
 endif()
 
 if (SNAPSHOT)
   target_compile_definitions(OpenSCAD PRIVATE OPENSCAD_SNAPSHOT)
-  set(MACOSX_BUNDLE_ICON_FILE icon-nightly.icns)
-  set(WINDOWS_RESOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/openscad_win32-nightly.rc)
+  set(MACOSX_BUNDLE_ICON_FILE ${RESOURCE_DIR}/icons/icon-nightly.icns)
+  set(WINDOWS_RESOURCE_PATH ${RESOURCE_DIR}/openscad_win32-nightly.rc)
 else()
-  set(MACOSX_BUNDLE_ICON_FILE OpenSCAD.icns)
-  set(WINDOWS_RESOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/openscad_win32.rc)
+  set(MACOSX_BUNDLE_ICON_FILE ${RESOURCE_DIR}/icons/OpenSCAD.icns)
+  set(WINDOWS_RESOURCE_PATH ${RESOURCE_DIR}/openscad_win32.rc)
 endif()
-set(RESOURCE_FILES icons/${MACOSX_BUNDLE_ICON_FILE})
+
+if (APPLE)
+  list(APPEND RESOURCE_FILES ${RESOURCE_DIR}/mac.qrc)
+  list(APPEND RESOURCE_FILES ${MACOSX_BUNDLE_ICON_FILE})
+elseif(WIN32)
+  list(APPEND RESOURCE_FILES ${WINDOWS_RESOURCE_PATH})
+endif()
 
 if (SORT_BUILD)
   # Build the last modified sources first (to fail fast during development)
@@ -880,7 +899,7 @@ if (SORT_BUILD)
     OUTPUT_VARIABLE Sources)
 endif()
 
-target_sources(OpenSCAD PRIVATE ${Sources} ${RESOURCE_FILES} ${WINDOWS_RESOURCE_PATH})
+target_sources(OpenSCAD PRIVATE ${Sources} ${RESOURCE_FILES})
 find_program(SHELL_EXE NAMES sh bash $ENV{SHELL})
 add_custom_command(TARGET OpenSCAD POST_BUILD
     COMMAND "${SHELL_EXE}"
@@ -896,7 +915,7 @@ if(APPLE AND NOT APPLE_UNIX)
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${OPENSCAD_YEAR}.${OPENSCAD_MONTH}
     RESOURCE "${RESOURCE_FILES}"
   )
-  set(BUNDLE_RESOURCES_DIR ${CMAKE_BINARY_DIR}/OpenSCAD.app/Contents/Resources)
+  set(BUNDLE_RESOURCES_DIR ${CMAKE_CURRENT_BINARY_DIR}/OpenSCAD.app/Contents/Resources)
   file(COPY ${CMAKE_SOURCE_DIR}/color-schemes DESTINATION ${BUNDLE_RESOURCES_DIR})
   file(COPY ${CMAKE_SOURCE_DIR}/examples DESTINATION ${BUNDLE_RESOURCES_DIR})
   file(COPY ${CMAKE_SOURCE_DIR}/fonts DESTINATION ${BUNDLE_RESOURCES_DIR})
@@ -921,20 +940,26 @@ if(MXECROSS)
   list(APPEND COMMON_LIBRARIES Qt5::QSvgPlugin)
 endif()
 
+# Configure icon-related files, for release vs nightly
+configure_file(${CMAKE_CURRENT_LIST_DIR}/openscad.appdata.xml.in ${CMAKE_CURRENT_LIST_DIR}/openscad.appdata.xml.in2)
+configure_file(${RESOURCE_DIR}/icons/openscad.desktop.in ${RESOURCE_DIR}/icons/openscad.desktop)
+configure_file(${RESOURCE_DIR}/common.qrc.in ${RESOURCE_DIR}/common.qrc)
+configure_file(${RESOURCE_DIR}/mac.qrc.in ${RESOURCE_DIR}/mac.qrc)
+
 target_link_libraries(OpenSCAD PRIVATE ${COMMON_LIBRARIES} ${PLATFORM_LIBS})
 
 if(NOT APPLE OR APPLE_UNIX)
 set_target_properties(OpenSCAD PROPERTIES OUTPUT_NAME openscad${SUFFIX_WITH_DASH})
 install(TARGETS OpenSCAD RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES ${CMAKE_CURRENT_LIST_DIR}/doc/openscad.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 RENAME openscad${SUFFIX_WITH_DASH}.1)
-install(FILES ${CMAKE_CURRENT_LIST_DIR}/icons/openscad.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications RENAME openscad${SUFFIX_WITH_DASH}.desktop)
 install(FILES ${CMAKE_CURRENT_LIST_DIR}/openscad.appdata.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/metainfo RENAME org.openscad.OpenSCAD${SUFFIX_WITH_DASH}.appdata.xml)
-install(FILES ${CMAKE_CURRENT_LIST_DIR}/icons/openscad.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/mime/packages RENAME openscad${SUFFIX_WITH_DASH}.xml)
-install(FILES ${CMAKE_CURRENT_LIST_DIR}/icons/openscad${SUFFIX_WITH_DASH}-48.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/48x48/apps RENAME openscad${SUFFIX_WITH_DASH}.png)
-install(FILES ${CMAKE_CURRENT_LIST_DIR}/icons/openscad${SUFFIX_WITH_DASH}-64.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/64x64/apps RENAME openscad${SUFFIX_WITH_DASH}.png)
-install(FILES ${CMAKE_CURRENT_LIST_DIR}/icons/openscad${SUFFIX_WITH_DASH}-128.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/128x128/apps RENAME openscad${SUFFIX_WITH_DASH}.png)
-install(FILES ${CMAKE_CURRENT_LIST_DIR}/icons/openscad${SUFFIX_WITH_DASH}-256.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/256x256/apps RENAME openscad${SUFFIX_WITH_DASH}.png)
-install(FILES ${CMAKE_CURRENT_LIST_DIR}/icons/openscad${SUFFIX_WITH_DASH}-512.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/512x512/apps RENAME openscad${SUFFIX_WITH_DASH}.png)
+install(FILES ${RESOURCE_DIR}/icons/openscad.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications RENAME openscad${SUFFIX_WITH_DASH}.desktop)
+install(FILES ${RESOURCE_DIR}/icons/openscad.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/mime/packages RENAME openscad${SUFFIX_WITH_DASH}.xml)
+install(FILES ${RESOURCE_DIR}/icons/openscad${SUFFIX_WITH_DASH}-48.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/48x48/apps RENAME openscad${SUFFIX_WITH_DASH}.png)
+install(FILES ${RESOURCE_DIR}/icons/openscad${SUFFIX_WITH_DASH}-64.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/64x64/apps RENAME openscad${SUFFIX_WITH_DASH}.png)
+install(FILES ${RESOURCE_DIR}/icons/openscad${SUFFIX_WITH_DASH}-128.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/128x128/apps RENAME openscad${SUFFIX_WITH_DASH}.png)
+install(FILES ${RESOURCE_DIR}/icons/openscad${SUFFIX_WITH_DASH}-256.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/256x256/apps RENAME openscad${SUFFIX_WITH_DASH}.png)
+install(FILES ${RESOURCE_DIR}/icons/openscad${SUFFIX_WITH_DASH}-512.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/512x512/apps RENAME openscad${SUFFIX_WITH_DASH}.png)
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/color-schemes DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/openscad${SUFFIX_WITH_DASH})
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/examples DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/openscad${SUFFIX_WITH_DASH})
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/fonts DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/openscad${SUFFIX_WITH_DASH} PATTERN ".uuid" EXCLUDE)

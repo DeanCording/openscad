@@ -527,6 +527,7 @@ list(APPEND MISC_FILES
   ${TEST_SCAD_DIR}/misc/escape-test.scad
   ${TEST_SCAD_DIR}/misc/include-tests.scad
   ${TEST_SCAD_DIR}/misc/include-overwrite-main.scad
+  ${TEST_SCAD_DIR}/misc/include-overwrite-main2.scad
   ${TEST_SCAD_DIR}/misc/use-tests.scad
   ${TEST_SCAD_DIR}/misc/assert-tests.scad
   ${TEST_SCAD_DIR}/misc/let-module-tests.scad
@@ -536,6 +537,7 @@ list(APPEND MISC_FILES
   ${TEST_SCAD_DIR}/misc/allfunctions.scad
   ${TEST_SCAD_DIR}/misc/allmodules.scad
   ${TEST_SCAD_DIR}/misc/special-consts.scad
+  ${TEST_SCAD_DIR}/misc/variable-overwrite.scad
 )
 
 
@@ -572,7 +574,6 @@ list(APPEND ECHO_FILES ${FUNCTION_FILES} ${MISC_FILES} ${REDEFINITION_FILES}
   ${TEST_SCAD_DIR}/misc/recursion-test-function2.scad
   ${TEST_SCAD_DIR}/misc/recursion-test-function3.scad
   ${TEST_SCAD_DIR}/misc/recursion-test-module.scad
-  ${TEST_SCAD_DIR}/misc/recursion-test-vector.scad
   ${TEST_SCAD_DIR}/misc/tail-recursion-tests.scad
   ${TEST_SCAD_DIR}/misc/value-reassignment-tests.scad
   ${TEST_SCAD_DIR}/misc/value-reassignment-tests2.scad
@@ -619,7 +620,16 @@ list(APPEND ECHO_FILES ${FUNCTION_FILES} ${MISC_FILES} ${REDEFINITION_FILES}
   ${TEST_DATA_DIR}/use-order-test/use-order-test.scad
   ${TEST_SCAD_DIR}/misc/text-metrics-test.scad
   ${TEST_SCAD_DIR}/json/import-json.scad
+  ${TEST_SCAD_DIR}/json/import-json-relative-path.scad
   ${TEST_SCAD_DIR}/misc/vector-swizzling.scad
+  ${TEST_SCAD_DIR}/misc/linenumber.scad
+)
+
+# trace-usermodule-parameters is on by default,
+# but can generate very long outputs and potentially
+# unstable outputs, when combined with recursive tests.
+list(APPEND ECHO_FILES_NOPARAMETERTRACE
+  ${TEST_SCAD_DIR}/misc/recursion-test-vector.scad
 )
 
 list(APPEND ASTDUMPTEST_FILES ${MISC_FILES}
@@ -676,6 +686,8 @@ list(APPEND OPENCSGTEST_FILES ${STL_IMPORT_FILES})
 list(APPEND CGALSTLSANITYTEST_FILES ${TEST_SCAD_DIR}/misc/normal-nan.scad)
 
 list(APPEND EXPORT_STL_TEST_FILES ${TEST_SCAD_DIR}/stl/stl-export.scad)
+
+list(APPEND EXPORT_OBJ_TEST_FILES ${TEST_SCAD_DIR}/obj/obj-export.scad)
 
 list(APPEND EXPORT_3MF_TEST_FILES ${TEST_SCAD_DIR}/3mf/3mf-export.scad)
 
@@ -832,6 +844,7 @@ experimental_tests(throwntogethertest_text-metrics)
 experimental_tests(dxfpngtest_text-metrics)
 experimental_tests(svgpngtest_text-metrics)
 experimental_tests(echotest_import-json)
+experimental_tests(echotest_import-json-relative-path)
 
 # Test config handling
 
@@ -966,9 +979,14 @@ add_cmdline_test(csgtermtest      OPENSCAD SUFFIX term FILES
   ${TEST_SCAD_DIR}/misc/allfunctions.scad
   ${TEST_SCAD_DIR}/misc/allmodules.scad
 )
+
 add_cmdline_test(echotest         OPENSCAD SUFFIX echo FILES ${ECHO_FILES})
+add_cmdline_test(echotest         OPENSCAD SUFFIX echo FILES ${ECHO_FILES_NOPARAMETERTRACE} ARGS --trace-usermodule-parameters=false)
 add_cmdline_test(echostdiotest    OPENSCAD SUFFIX echo FILES ${TEST_SCAD_DIR}/misc/echo-tests.scad STDIO EXPECTEDDIR echotest ARGS --export-format echo)
 add_cmdline_test(echotest         OPENSCAD SUFFIX echo FILES ${TEST_SCAD_DIR}/misc/builtin-invalid-range-test.scad ARGS --check-parameter-ranges=on)
+
+# This test is quiet to speed up the test and to have a stable and reproducable output
+add_cmdline_test(echotest         OPENSCAD SUFFIX echo FILES ${TEST_SCAD_DIR}/issues/issue4172-echo-vector-stack-exhaust.scad ARGS --quiet --trace-usermodule-parameters=false)
 
 # generate a very large scad file which we would rather not commit to the source tree
 # this is for stress-testing the parser
@@ -1156,6 +1174,7 @@ add_cmdline_test(pdfexporttest SCRIPT ${EXPORT_PNGTEST_PY} SUFFIX png FILES ${SC
 add_cmdline_test(monotonepngtest OPENSCAD SUFFIX png FILES ${EXPORT3D_CGAL_TEST_FILES} ${EXPORT3D_CGALCGAL_TEST_FILES} ARGS --colorscheme=Monotone --render)
 
 add_cmdline_test(stlexport             OPENSCAD SUFFIX stl FILES ${EXPORT_STL_TEST_FILES} ARGS --enable=sort-stl --render)
+add_cmdline_test(objexport             OPENSCAD SUFFIX obj FILES ${EXPORT_OBJ_TEST_FILES} ARGS --render)
 add_cmdline_test(3mfexport             OPENSCAD ARGS SUFFIX 3mf FILES ${EXPORT_3MF_TEST_FILES})
 
 # stlpngtest: direct STL output, preview rendering

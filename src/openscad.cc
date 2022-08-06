@@ -291,7 +291,7 @@ static bool checkAndExport(shared_ptr<const Geometry> root_geom, unsigned nd,
   return true;
 }
 
-void set_render_color_scheme(const std::string color_scheme, const bool exit_if_not_found)
+void set_render_color_scheme(const std::string& color_scheme, const bool exit_if_not_found)
 {
   if (color_scheme.empty()) {
     return;
@@ -317,7 +317,6 @@ struct CommandLine
   const std::string& filename;
   const bool is_stdout;
   std::string output_file;
-  const char *deps_output_file;
   const fs::path& original_path;
   const std::string& parameterFile;
   const std::string& setName;
@@ -494,16 +493,6 @@ int do_export(const CommandLine& cmd, const RenderVariables& render_variables, F
   }
   Tree tree(root_node, fparent.string());
 
-  if (cmd.deps_output_file) {
-    std::string deps_out(cmd.deps_output_file);
-    std::string geom_out(cmd.output_file);
-    int result = write_deps(deps_out, geom_out);
-    if (!result) {
-      LOG(message_group::None, Location::NONE, "", "Error writing deps");
-      return 1;
-    }
-  }
-
   if (curFormat == FileFormat::CSG) {
     // https://github.com/openscad/openscad/issues/128
     // When I use the csg ouptput from the command line the paths in 'import'
@@ -573,6 +562,7 @@ int do_export(const CommandLine& cmd, const RenderVariables& render_variables, F
 
     if (curFormat == FileFormat::ASCIISTL ||
         curFormat == FileFormat::STL ||
+        curFormat == FileFormat::OBJ ||
         curFormat == FileFormat::OFF ||
         curFormat == FileFormat::WRL ||
         curFormat == FileFormat::AMF ||
@@ -726,19 +716,10 @@ int gui(vector<string>& inputFiles, const fs::path& original_path, int argc, cha
   QCoreApplication::setApplicationVersion(TOSTRING(OPENSCAD_VERSION));
   QGuiApplication::setApplicationDisplayName("OpenSCAD");
   QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
-#ifndef Q_OS_MAC
-#ifdef OPENSCAD_SNAPSHOT
-  app.setWindowIcon(QIcon(":/icons/openscad-nightly.png"));
-#else
-  app.setWindowIcon(QIcon(":/icons/openscad.png"));
-#endif
-#endif
 #ifdef Q_OS_MAC
-#ifdef OPENSCAD_SNAPSHOT
-  app.setWindowIcon(QIcon(":/icons/openscad-nightly-macos.png"));
+  app.setWindowIcon(QIcon(":/icon-macos.png"));
 #else
-  app.setWindowIcon(QIcon(":/icons/openscad-macos.png"));
-#endif
+  app.setWindowIcon(QIcon(":/logo.png"));
 #endif
 
   // Other global settings
@@ -766,24 +747,6 @@ int gui(vector<string>& inputFiles, const fs::path& original_path, int argc, cha
   if (updater->automaticallyChecksForUpdates()) updater->checkForUpdates();
   updater->init();
 #endif
-
-#ifndef USE_QOPENGLWIDGET
-  // This workaround appears to only be needed when QGLWidget is used QOpenGLWidget
-  // available in Qt 5.4 is much better.
-  QGLFormat fmt;
-#if 0 /*** disabled by clifford wolf: adds rendering artefacts with OpenCSG ***/
-  // turn on anti-aliasing
-  fmt.setSampleBuffers(true);
-  fmt.setSamples(4);
-#endif
-  // The default SwapInterval causes very bad interactive behavior as
-  // waiting for the buffer swap seems to block mouse events. So the
-  // effect is that we can process mouse events at the frequency of
-  // the screen retrace interval causing them to queue up.
-  // (see https://bugreports.qt-project.org/browse/QTBUG-39370
-  fmt.setSwapInterval(0);
-  QGLFormat::setDefaultFormat(fmt);
-#endif // ifndef USE_QOPENGLWIDGET
 
   set_render_color_scheme(arg_colorscheme, false);
   auto noInputFiles = false;
@@ -1004,6 +967,8 @@ int main(int argc, char **argv)
     ("m,m", po::value<string>(), "make_cmd -runs make_cmd file if file is missing")
     ("quiet,q", "quiet mode (don't print anything *except* errors)")
     ("hardwarnings", "Stop on the first warning")
+    ("trace-depth", po::value<unsigned int>(), "=n, maximum number of trace messages")
+    ("trace-usermodule-parameters", po::value<string>(), "=true/false, configure the output of user modul parameters in a trace")
     ("check-parameters", po::value<string>(), "=true/false, configure the parameter check for user modules and functions")
     ("check-parameter-ranges", po::value<string>(), "=true/false, configure the parameter range check for builtin modules")
     ("debug", po::value<string>(), "special debug info - specify 'all' or a set of source file names")
@@ -1045,7 +1010,11 @@ int main(int argc, char **argv)
     OpenSCAD::hardwarnings = true;
   }
 
+  if (vm.count("traceDepth")) {
+    OpenSCAD::traceDepth = vm["traceDepth"].as<unsigned int>();
+  }
   std::map<std::string, bool *> flags;
+  flags.insert(std::make_pair("trace-usermodule-parameters", &OpenSCAD::traceUsermoduleParameters));
   flags.insert(std::make_pair("check-parameters", &OpenSCAD::parameterCheck));
   flags.insert(std::make_pair("check-parameter-ranges", &OpenSCAD::rangeCheck));
   for (auto flag : flags) {
@@ -1204,7 +1173,6 @@ int main(int argc, char **argv)
             input_file,
             is_stdout,
             output_file,
-            deps_output_file,
             original_path,
             parameterFile,
             parameterSet,
@@ -1220,6 +1188,16 @@ int main(int argc, char **argv)
       }
     } catch (const HardWarningException&) {
       rc = 1;
+    }
+
+    if (deps_output_file) {
+      std::string deps_out(deps_output_file);
+      vector<std::string> geom_out(output_files);
+      int result = write_deps(deps_out, geom_out);
+      if (!result) {
+        LOG(message_group::None, Location::NONE, "", "Error writing deps");
+        return 1;
+      }
     }
   } else if (QtUseGUI()) {
     if (vm.count("export-format")) {

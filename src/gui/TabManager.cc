@@ -194,7 +194,7 @@ void TabManager::createTab(const QString& filename)
   connect(par->editActionZoomTextOut, SIGNAL(triggered()), editor, SLOT(zoomOut()));
 
   connect(editor, SIGNAL(contentsChanged()), this, SLOT(updateActionUndoState()));
-  connect(editor, SIGNAL(contentsChanged()), par, SLOT(animateUpdateDocChanged()));
+  connect(editor, SIGNAL(contentsChanged()), par,  SLOT(editorContentChanged()));
   connect(editor, SIGNAL(contentsChanged()), this, SLOT(setContentRenderState()));
   connect(editor, SIGNAL(modificationChanged(EditorInterface*)), this, SLOT(setTabModified(EditorInterface*)));
   connect(editor->parameterWidget, &ParameterWidget::modificationChanged, [editor = this->editor, this] {
@@ -383,6 +383,7 @@ void TabManager::showContextMenuEvent(const QPoint& pos)
   menu->addAction(par->editActionFindPrevious);
   menu->addSeparator();
   menu->addAction(par->editActionInsertTemplate);
+  menu->addAction(par->editActionFoldAll);
   menu->exec(editor->mapToGlobal(pos));
 
   delete menu;
@@ -441,9 +442,8 @@ void TabManager::setContentRenderState() //since last render
 
 void TabManager::stopAnimation()
 {
-  par->viewActionAnimate->setChecked(false);
-  par->viewModeAnimate();
-  par->e_tval->setText("");
+  par->animateWidget->pauseAnimation();
+  par->animateWidget->e_tval->setText("");
 }
 
 void TabManager::updateFindState()
@@ -696,15 +696,15 @@ bool TabManager::saveAs(EditorInterface *edt)
 
   if (QFileInfo(filename).suffix().isEmpty()) {
     filename.append(".scad");
-  }
 
-  // Manual overwrite check since Qt doesn't do it, when using the
-  // defaultSuffix property
-  const QFileInfo info(filename);
-  if (info.exists()) {
-    const auto text = QString(_("%1 already exists.\nDo you want to replace it?")).arg(info.fileName());
-    if (QMessageBox::warning(par, par->windowTitle(), text, QMessageBox::Yes | QMessageBox::No, QMessageBox::No) != QMessageBox::Yes) {
-      return false;
+    // Manual overwrite check since Qt doesn't do it, when using the
+    // defaultSuffix property
+    const QFileInfo info(filename);
+    if (info.exists()) {
+        const auto text = QString(_("%1 already exists.\nDo you want to replace it?")).arg(info.fileName());
+        if (QMessageBox::warning(par, par->windowTitle(), text, QMessageBox::Yes | QMessageBox::No, QMessageBox::No) != QMessageBox::Yes) {
+        return false;
+        }
     }
   }
 

@@ -54,19 +54,10 @@
 
 #include "qt-obsolete.h"
 
-QGLView::QGLView(QWidget *parent) :
-#ifdef USE_QOPENGLWIDGET
-  QOpenGLWidget(parent)
-#else
-  QGLWidget(parent)
-#endif
+QGLView::QGLView(QWidget *parent) : QOpenGLWidget(parent)
 {
   init();
 }
-
-#if defined(_WIN32) && !defined(USE_QOPENGLWIDGET)
-static bool running_under_wine = false;
-#endif
 
 void QGLView::init()
 {
@@ -76,16 +67,6 @@ void QGLView::init()
   this->statusLabel = nullptr;
 
   setMouseTracking(true);
-
-
-
-#if defined(_WIN32) && !defined(USE_QOPENGLWIDGET)
-// see paintGL() + issue160 + wine FAQ
-#include <windows.h>
-  HMODULE hntdll = GetModuleHandle(L"ntdll.dll");
-  if (hntdll)
-    if ( (void *)GetProcAddress(hntdll, "wine_get_version") ) running_under_wine = true;
-#endif
 }
 
 void QGLView::resetView()
@@ -116,7 +97,6 @@ std::string QGLView::getRendererInfo() const
   std::ostringstream info;
   info << glew_dump();
   // Don't translate as translated text in the Library Info dialog is not wanted
-#ifdef USE_QOPENGLWIDGET
   info << "\nQt graphics widget: QOpenGLWidget";
   auto qsf = this->format();
   auto rbits = qsf.redBufferSize();
@@ -127,9 +107,6 @@ std::string QGLView::getRendererInfo() const
   auto sbits = qsf.stencilBufferSize();
   info << boost::format("\nQSurfaceFormat: RGBA(%d%d%d%d), depth(%d), stencil(%d)\n\n") %
     rbits % gbits % bbits % abits % dbits % sbits;
-#else
-  info << "\nQt graphics widget: QGLWidget";
-#endif // ifdef USE_QOPENGLWIDGET
   info << glew_extensions_dump();
   return info.str();
 }
@@ -173,6 +150,7 @@ void QGLView::display_opencsg_warning_dialog()
 void QGLView::resizeGL(int w, int h)
 {
   GLView::resizeGL(w, h);
+  emit resized();
 }
 
 void QGLView::paintGL()
@@ -186,10 +164,6 @@ void QGLView::paintGL()
       .arg(size().rheight());
     statusLabel->setText(status);
   }
-
-#if defined(_WIN32) && !defined(USE_QOPENGLWIDGET)
-  if (running_under_wine) swapBuffers();
-#endif
 }
 
 void QGLView::mousePressEvent(QMouseEvent *event)
@@ -239,8 +213,8 @@ void QGLView::mouseDoubleClickEvent(QMouseEvent *event) {
 
   if (success == GL_TRUE) {
     cam.object_trans -= Vector3d(px, py, pz);
-    updateGL();
-    emit doAnimateUpdate();
+    update();
+    emit cameraChanged();
   }
 }
 
@@ -257,7 +231,8 @@ void QGLView::mouseMoveEvent(QMouseEvent *event)
   double dy = (this_mouse.y() - last_mouse.y()) * 0.7;
   if (mouse_drag_active) {
     mouse_drag_moved = true;
-    if (event->buttons() & Qt::LeftButton
+    auto button_compare = this->mouseSwapButtons?Qt::RightButton : Qt::LeftButton;
+    if (event->buttons() & button_compare
 #ifdef Q_OS_MAC
         && !(event->modifiers() & Qt::MetaModifier)
 #endif
@@ -303,8 +278,9 @@ void QGLView::mouseReleaseEvent(QMouseEvent *event)
   mouse_drag_active = false;
   releaseMouse();
 
+  auto button_compare = this->mouseSwapButtons?Qt::LeftButton : Qt::RightButton;
   if (!mouse_drag_moved
-      && (event->button() == Qt::RightButton)) {
+      && (event->button() == button_compare)) {
     QPoint point = event->pos();
     //point.setY(this->height() - point.y());
     emit doSelectObject(point);
@@ -316,7 +292,7 @@ const QImage& QGLView::grabFrame()
 {
   // Force reading from front buffer. Some configurations will read from the back buffer here.
   glReadBuffer(GL_FRONT);
-  this->frame = grabFrameBuffer();
+  this->frame = grabFramebuffer();
   return this->frame;
 }
 
@@ -349,7 +325,8 @@ void QGLView::ZoomOut(void)
 void QGLView::zoom(double v, bool relative)
 {
   this->cam.zoom(v, relative);
-  updateGL();
+  update();
+  emit cameraChanged();
 }
 
 void QGLView::zoomCursor(int x, int y, int zoom)
@@ -402,8 +379,8 @@ void QGLView::translate(double x, double y, double z, bool relative, bool viewPo
   cam.object_trans.x() = f * cam.object_trans.x() + tm(0, 3);
   cam.object_trans.y() = f * cam.object_trans.y() + tm(1, 3);
   cam.object_trans.z() = f * cam.object_trans.z() + tm(2, 3);
-  updateGL();
-  emit doAnimateUpdate();
+  update();
+  emit cameraChanged();
 }
 
 void QGLView::rotate(double x, double y, double z, bool relative)
@@ -415,8 +392,8 @@ void QGLView::rotate(double x, double y, double z, bool relative)
   normalizeAngle(cam.object_rot.x());
   normalizeAngle(cam.object_rot.y());
   normalizeAngle(cam.object_rot.z());
-  updateGL();
-  emit doAnimateUpdate();
+  update();
+  emit cameraChanged();
 }
 
 void QGLView::rotate2(double x, double y, double z)
@@ -462,6 +439,6 @@ void QGLView::rotate2(double x, double y, double z)
   normalizeAngle(cam.object_rot.y());
   normalizeAngle(cam.object_rot.z());
 
-  updateGL();
-  emit doAnimateUpdate();
+  update();
+  emit cameraChanged();
 }

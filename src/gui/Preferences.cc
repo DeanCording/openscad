@@ -44,6 +44,7 @@
 #include "input/InputDriverManager.h"
 #include "SettingsWriter.h"
 #include "OctoPrint.h"
+#include "IgnoreWheelWhenNotFocused.h"
 
 Preferences *Preferences::instance = nullptr;
 
@@ -131,7 +132,10 @@ void Preferences::init() {
   this->defaultmap["advanced/enableSoundNotification"] = true;
   this->defaultmap["advanced/timeThresholdOnRenderCompleteSound"] = 0;
   this->defaultmap["advanced/consoleMaxLines"] = 5000;
+  this->defaultmap["advanced/consoleAutoClear"] = false;
   this->defaultmap["advanced/enableHardwarnings"] = false;
+  this->defaultmap["advanced/traceDepth"] = 12;
+  this->defaultmap["advanced/enableTraceUsermoduleParameters"] = true;
   this->defaultmap["advanced/enableParameterCheck"] = true;
   this->defaultmap["advanced/enableParameterRangeCheck"] = false;
 
@@ -181,6 +185,7 @@ void Preferences::init() {
   this->consoleMaxLinesEdit->setValidator(uintValidator);
   this->lineEditCharacterThreshold->setValidator(validator1);
   this->lineEditStepSize->setValidator(validator1);
+  this->traceDepthEdit->setValidator(uintValidator);
 
   initComboBox(this->comboBoxIndentUsing, Settings::Settings::indentStyle);
   initComboBox(this->comboBoxLineWrap, Settings::Settings::lineWrap);
@@ -198,6 +203,8 @@ void Preferences::init() {
   initComboBox(this->comboBoxOctoPrintAction, Settings::Settings::octoPrintAction);
   initComboBox(this->comboBoxToolbarExport3D, Settings::Settings::toolbarExport3D);
   initComboBox(this->comboBoxToolbarExport2D, Settings::Settings::toolbarExport2D);
+
+  installIgnoreWheelWhenNotFocused(this);
 
   Settings::Settings::visit(SettingsReader());
 
@@ -504,6 +511,13 @@ void Preferences::on_checkBoxMouseCentricZoom_toggled(bool val)
   emit updateMouseCentricZoom(val);
 }
 
+void Preferences::on_checkBoxMouseSwapButtons_toggled(bool val)
+{
+  Settings::Settings::mouseSwapButtons.setValue(val);
+  writeSettings();
+  emit updateMouseSwapButtons(val);
+}
+
 void Preferences::on_spinBoxIndentationWidth_valueChanged(int val)
 {
   Settings::Settings::indentationWidth.setValue(val);
@@ -618,6 +632,12 @@ void Preferences::on_timeThresholdOnRenderCompleteSoundEdit_textChanged(const QS
   settings.setValue("advanced/timeThresholdOnRenderCompleteSound", text);
 }
 
+void Preferences::on_enableClearConsoleCheckBox_toggled(bool state)
+{
+  QSettingsCached settings;
+  settings.setValue("advanced/consoleAutoClear", state);
+}
+
 void Preferences::on_consoleMaxLinesEdit_textChanged(const QString& text)
 {
   QSettingsCached settings;
@@ -671,6 +691,18 @@ void Preferences::on_enableHardwarningsCheckBox_toggled(bool state)
 {
   QSettingsCached settings;
   settings.setValue("advanced/enableHardwarnings", state);
+}
+
+void Preferences::on_traceDepthEdit_textChanged(const QString& text)
+{
+  QSettingsCached settings;
+  settings.setValue("advanced/traceDepth", text);
+}
+
+void Preferences::on_enableTraceUsermoduleParametersCheckBox_toggled(bool state)
+{
+  QSettingsCached settings;
+  settings.setValue("advanced/enableTraceUsermoduleParameters", state);
 }
 
 void Preferences::on_enableParameterCheckBox_toggled(bool state)
@@ -943,6 +975,7 @@ void Preferences::updateGUI()
   BlockSignals<QCheckBox *>(this->launcherBox)->setChecked(getValue("launcher/showOnStartup").toBool());
   BlockSignals<QCheckBox *>(this->enableSoundOnRenderCompleteCheckBox)->setChecked(getValue("advanced/enableSoundNotification").toBool());
   BlockSignals<QLineEdit *>(this->timeThresholdOnRenderCompleteSoundEdit)->setText(getValue("advanced/timeThresholdOnRenderCompleteSound").toString());
+  BlockSignals<QCheckBox *>(this->enableClearConsoleCheckBox)->setChecked(getValue("advanced/consoleAutoClear").toBool());
   BlockSignals<QLineEdit *>(this->consoleMaxLinesEdit)->setText(getValue("advanced/consoleMaxLines").toString());
   {
     const auto fontfamily = getValue("advanced/consoleFontFamily").toString();
@@ -959,6 +992,8 @@ void Preferences::updateGUI()
     }
   }
   BlockSignals<QCheckBox *>(this->enableHardwarningsCheckBox)->setChecked(getValue("advanced/enableHardwarnings").toBool());
+  BlockSignals<QLineEdit *>(this->traceDepthEdit)->setText(getValue("advanced/traceDepth").toString());
+  BlockSignals<QCheckBox *>(this->enableTraceUsermoduleParametersCheckBox)->setChecked(getValue("advanced/enableTraceUsermoduleParameters").toBool());
   BlockSignals<QCheckBox *>(this->enableParameterCheckBox)->setChecked(getValue("advanced/enableParameterCheck").toBool());
   BlockSignals<QCheckBox *>(this->enableRangeCheckBox)->setChecked(getValue("advanced/enableParameterRangeCheck").toBool());
   BlockSignals<QCheckBox *>(this->useAsciiSTLCheckBox)->setChecked(Settings::Settings::exportUseAsciiSTL.value());
@@ -1001,6 +1036,7 @@ void Preferences::updateGUI()
   initUpdateCheckBox(this->checkBoxEnableNumberScrollWheel, Settings::Settings::enableNumberScrollWheel);
   initUpdateCheckBox(this->checkBoxShowWarningsIn3dView, Settings::Settings::showWarningsIn3dView);
   initUpdateCheckBox(this->checkBoxMouseCentricZoom, Settings::Settings::mouseCentricZoom);
+  initUpdateCheckBox(this->checkBoxMouseSwapButtons, Settings::Settings::mouseSwapButtons);
   initUpdateCheckBox(this->checkBoxEnableLineNumbers, Settings::Settings::enableLineNumbers);
 
 

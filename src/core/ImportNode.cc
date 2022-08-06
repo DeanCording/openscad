@@ -53,7 +53,7 @@ using namespace boost::assign; // bring 'operator+=()' into scope
 
 #include <cstdint>
 
-extern PolySet *import_amf(std::string, const Location& loc);
+extern PolySet *import_amf(const std::string&, const Location& loc);
 extern Geometry *import_3mf(const std::string&, const Location& loc);
 
 static std::shared_ptr<AbstractNode> do_import(const ModuleInstantiation *inst, Arguments arguments, Children children, ImportType type)
@@ -121,7 +121,7 @@ static std::shared_ptr<AbstractNode> do_import(const ModuleInstantiation *inst, 
   bool originOk = origin.getVec2(node->origin_x, node->origin_y);
   originOk &= std::isfinite(node->origin_x) && std::isfinite(node->origin_y);
   if (origin.isDefined() && !originOk) {
-    LOG(message_group::Warning, inst->location(), parameters.documentRoot(), "Unable to convert import(..., origin=%1$s) parameter to vec2", origin.toEchoString());
+    LOG(message_group::Warning, inst->location(), parameters.documentRoot(), "Unable to convert import(..., origin=%1$s) parameter to vec2", origin.toEchoStringNoThrow());
   }
 
   const auto& center = parameters["center"];
@@ -138,7 +138,7 @@ static std::shared_ptr<AbstractNode> do_import(const ModuleInstantiation *inst, 
       std::string filePath = boostfs_uncomplete(inst->location().filePath(), parameters.documentRoot()).generic_string();
       LOG(message_group::Warning, Location::NONE, "",
           "Invalid dpi value giving, using default of %1$f dpi. Value must be positive and >= 0.001, file %2$s, import() at line %3$d",
-          origin.toEchoString(), filePath, filePath, inst->location().firstLine()
+          origin.toEchoStringNoThrow(), filePath, filePath, inst->location().firstLine()
           );
     } else {
       node->dpi = val;

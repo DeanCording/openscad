@@ -115,7 +115,7 @@ case $OS in
         ZIP="zip"
         ZIPARGS="-r -q"
         echo Mingw-cross build using ARCH=$ARCH MXELIBTYPE=$MXELIBTYPE
-        CMAKE_CONFIG="$CMAKE_CONFIG -DMXECROSS=ON"
+        CMAKE_CONFIG="$CMAKE_CONFIG -DMXECROSS=ON -DALLOW_BUNDLED_HIDAPI=ON"
     ;;
 esac
 
@@ -219,7 +219,7 @@ case $OS in
         if [ $FAKEMAKE ]; then
             echo "notexe. debugging build process" > openscad.exe
         else
-            make -j$NUMCPU
+            make -j$NUMCPU VERBOSE=1
         fi
         if [ ! -e openscad.exe ]; then
             echo "can't find openscad.exe. build failed. stopping."

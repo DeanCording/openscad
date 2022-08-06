@@ -57,9 +57,9 @@ using namespace NMR;
 #include "cgalutils.h"
 #include "CGAL_Nef_polyhedron.h"
 
-static void export_3mf_error(const std::string msg, PLib3MFModel *& model)
+static void export_3mf_error(const std::string& msg, PLib3MFModel *& model)
 {
-  LOG(message_group::Export_Error, Location::NONE, "", std::string(msg));
+  LOG(message_group::Export_Error, Location::NONE, "", msg);
   if (model) {
     lib3mf_release(model);
     model = nullptr;
@@ -217,9 +217,9 @@ void export_3mf(const shared_ptr<const Geometry>& geom, std::ostream& output)
 #include "cgalutils.h"
 #include "CGAL_Nef_polyhedron.h"
 
-static void export_3mf_error(const std::string msg)
+static void export_3mf_error(const std::string& msg)
 {
-  LOG(message_group::Export_Error, Location::NONE, "", std::string(msg));
+  LOG(message_group::Export_Error, Location::NONE, "", msg);
 }
 
 /*
@@ -309,7 +309,7 @@ static bool append_3mf(const shared_ptr<const Geometry>& geom, Lib3MF::PWrapper&
   } else if (const auto N = dynamic_pointer_cast<const CGAL_Nef_polyhedron>(geom)) {
     return append_nef(*N, wrapper, model);
   } else if (const auto hybrid = dynamic_pointer_cast<const CGALHybridPolyhedron>(geom)) {
-    return append_polyset(*hybrid->toPolySet(), model);
+    return append_polyset(*hybrid->toPolySet(), wrapper, model);
   } else if (const auto ps = dynamic_pointer_cast<const PolySet>(geom)) {
     PolySet triangulated(3);
     PolySetUtils::tessellate_faces(*ps, triangulated);

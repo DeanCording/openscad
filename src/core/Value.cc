@@ -38,6 +38,7 @@
 #include "Expression.h"
 #include "EvaluationSession.h"
 #include "printutils.h"
+#include "StackCheck.h"
 #include "boost-utils.h"
 #include "double-conversion/double-conversion.h"
 #include "double-conversion/utils.h"
@@ -328,6 +329,9 @@ public:
   }
 
   void operator()(const VectorType& v) const {
+    if (StackCheck::inst().check()) { 
+      throw VectorEchoStringException::create();
+    }
     stream << '[';
     if (!v.empty()) {
       auto it = v.begin();
@@ -389,7 +393,12 @@ public:
   std::string operator()(const VectorType& v) const {
     // Create a single stream and pass reference to it for list elements for optimization.
     std::ostringstream stream;
-    (tostream_visitor(stream))(v);
+    try {
+      (tostream_visitor(stream))(v);
+    } catch (EvaluationException& e) {
+      LOG(message_group::Error, Location::NONE, "", e.what());
+      throw;
+    }
     return stream.str();
   }
 
@@ -418,6 +427,17 @@ std::string Value::toEchoString() const
   } else {
     return toString();
   }
+}
+
+std::string Value::toEchoStringNoThrow() const
+{
+  std::string ret;
+  try{
+    ret = toEchoString();
+  } catch (EvaluationException& e) {
+     ret = "...";
+  }
+  return ret;
 }
 
 std::string UndefType::toString() const {
