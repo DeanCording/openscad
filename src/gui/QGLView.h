@@ -8,7 +8,6 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include "GLView.h"
-#include "Renderer.h"
 
 class QGLView : public QOpenGLWidget, public GLView
 {
@@ -23,7 +22,7 @@ class QGLView : public QOpenGLWidget, public GLView
 public:
   QGLView(QWidget *parent = nullptr);
 #ifdef ENABLE_OPENCSG
-  bool hasOpenCSGSupport() { return this->opencsg_support; }
+  bool hasOpenCSGSupport() { return this->is_opencsg_capable; }
 #endif
   // Properties
   bool orthoMode() const { return (this->cam.projection == Camera::ProjectionType::ORTHOGONAL); }
@@ -39,8 +38,8 @@ public:
   void viewAll();
 
 public slots:
-  void ZoomIn(void);
-  void ZoomOut(void);
+  void ZoomIn();
+  void ZoomOut();
   void setMouseCentricZoom(bool var){
     this->mouseCentricZoom = var;
   }
@@ -90,3 +89,7 @@ signals:
   void resized();
   void doSelectObject(QPoint screen_coordinate);
 };
+
+/* These are defined in QLGView2.cc.  See the commentary there. */
+QOpenGLContext *getGLContext();
+void setGLContext(QOpenGLContext *);

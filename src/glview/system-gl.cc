@@ -46,8 +46,8 @@ std::string glew_extensions_dump()
   std::sort(extensions.begin(), extensions.end());
   std::ostringstream out;
   out << "GL Extensions:";
-  for (unsigned int i = 0; i < extensions.size(); ++i) {
-    out << extensions[i] << "\n";
+  for (auto& extension : extensions) {
+    out << extension << "\n";
   }
   return out.str();
 }
@@ -78,14 +78,3 @@ std::string glew_dump()
       << "\n";
   return out.str();
 }
-
-bool report_glerror(const char *function)
-{
-  GLenum tGLErr = glGetError();
-  if (tGLErr != GL_NO_ERROR) {
-    std::cerr << "OpenGL error 0x" << STR(std::hex << tGLErr) << ": " << gluErrorString(tGLErr) << " after " << function << std::endl;
-    return true;
-  }
-  return false;
-}
-

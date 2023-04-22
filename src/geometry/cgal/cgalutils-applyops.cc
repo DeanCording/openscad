@@ -5,13 +5,15 @@
 
 #include "cgal.h"
 #include "cgalutils.h"
+#include "Feature.h"
 #include "PolySet.h"
 #include "printutils.h"
 #include "progress.h"
-#include "Polygon2d.h"
-#include "PolySetUtils.h"
-#include "Grid.h"
 #include "CGALHybridPolyhedron.h"
+#ifdef ENABLE_MANIFOLD
+#include "ManifoldGeometry.h"
+#include "manifoldutils.h"
+#endif
 #include "node.h"
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -87,7 +89,7 @@ shared_ptr<const Geometry> applyOperator3D(const Geometry::Geometries& children,
         N->minkowski(*chN);
         break;
       default:
-        LOG(message_group::Error, Location::NONE, "", "Unsupported CGAL operator: %1$d", static_cast<int>(op));
+        LOG(message_group::Error, "Unsupported CGAL operator: %1$d", static_cast<int>(op));
       }
       if (item.first) item.first->progress_report();
     }
@@ -95,12 +97,12 @@ shared_ptr<const Geometry> applyOperator3D(const Geometry::Geometries& children,
   // union && difference assert triggered by tests/data/scad/bugs/rotate-diff-nonmanifold-crash.scad and tests/data/scad/bugs/issue204.scad
   catch (const CGAL::Failure_exception& e) {
     std::string opstr = op == OpenSCADOperator::INTERSECTION ? "intersection" : op == OpenSCADOperator::DIFFERENCE ? "difference" : op == OpenSCADOperator::UNION ? "union" : "UNKNOWN";
-    LOG(message_group::Error, Location::NONE, "", "CGAL error in CGALUtils::applyBinaryOperator %1$s: %2$s", opstr, e.what());
+    LOG(message_group::Error, "CGAL error in CGALUtils::applyBinaryOperator %1$s: %2$s", opstr, e.what());
   }
   // boost any_cast throws exceptions inside CGAL code, ending here https://github.com/openscad/openscad/issues/3756
   catch (const std::exception& e) {
     std::string opstr = op == OpenSCADOperator::INTERSECTION ? "intersection" : op == OpenSCADOperator::DIFFERENCE ? "difference" : op == OpenSCADOperator::UNION ? "union" : "UNKNOWN";
-    LOG(message_group::Error, Location::NONE, "", "exception in CGALUtils::applyBinaryOperator %1$s: %2$s", opstr, e.what());
+    LOG(message_group::Error, "exception in CGALUtils::applyBinaryOperator %1$s: %2$s", opstr, e.what());
   }
   return shared_ptr<Geometry>(N);
 }
@@ -112,7 +114,7 @@ shared_ptr<const Geometry> applyUnion3D(
     return applyUnion3DHybrid(chbegin, chend);
   }
 
-  typedef std::pair<shared_ptr<const CGAL_Nef_polyhedron>, int> QueueConstItem;
+  using QueueConstItem = std::pair<shared_ptr<const CGAL_Nef_polyhedron>, int>;
   struct QueueItemGreater {
     // stable sort for priority_queue by facets, then progress mark
     bool operator()(const QueueConstItem& lhs, const QueueConstItem& rhs) const
@@ -153,7 +155,7 @@ shared_ptr<const Geometry> applyUnion3D(
       return nullptr;
     }
   } catch (const CGAL::Failure_exception& e) {
-    LOG(message_group::Error, Location::NONE, "", "CGAL error in CGALUtils::applyUnion3D: %1$s", e.what());
+    LOG(message_group::Error, "CGAL error in CGALUtils::applyUnion3D: %1$s", e.what());
   }
   return nullptr;
 }
@@ -162,7 +164,7 @@ shared_ptr<const Geometry> applyUnion3D(
 
 bool applyHull(const Geometry::Geometries& children, PolySet& result)
 {
-  typedef CGAL::Epick K;
+  using K = CGAL::Epick;
   // Collect point cloud
   Reindexer<K::Point_3> reindexer;
   std::vector<K::Point_3> points;
@@ -193,8 +195,16 @@ bool applyHull(const Geometry::Geometries& children, PolySet& result)
           addPoint(vector_convert<K::Point_3>(p));
           return false;
         });
+#ifdef ENABLE_MANIFOLD
+    } else if (auto mani = dynamic_pointer_cast<const ManifoldGeometry>(chgeom)) {
+      points.reserve(points.size() + mani->numVertices());
+      mani->foreachVertexUntilTrue([&](auto& p) {
+          addPoint(vector_convert<K::Point_3>(p));
+          return false;
+        });
+#endif
     } else {
-      const PolySet *ps = dynamic_cast<const PolySet *>(chgeom.get());
+      const auto *ps = dynamic_cast<const PolySet *>(chgeom.get());
       if (ps) {
         points.reserve(points.size() + ps->polygons.size() * 3);
         for (const auto& p : ps->polygons) {
@@ -220,7 +230,7 @@ bool applyHull(const Geometry::Geometries& children, PolySet& result)
       PRINTDB("After hull valid: %d", r.is_valid());
       success = !createPolySetFromPolyhedron(r, result);
     } catch (const CGAL::Failure_exception& e) {
-      LOG(message_group::Error, Location::NONE, "", "CGAL error in applyHull(): %1$s", e.what());
+      LOG(message_group::Error, "CGAL error in applyHull(): %1$s", e.what());
     }
   }
   return success;
@@ -232,19 +242,24 @@ bool applyHull(const Geometry::Geometries& children, PolySet& result)
  */
 shared_ptr<const Geometry> applyMinkowski(const Geometry::Geometries& children)
 {
+#if ENABLE_MANIFOLD
+  if (Feature::ExperimentalManifold.is_enabled()) {
+    return ManifoldUtils::applyMinkowskiManifold(children);
+  }
+#endif
   if (Feature::ExperimentalFastCsg.is_enabled()) {
     return applyMinkowskiHybrid(children);
   }
   CGAL::Timer t, t_tot;
   assert(children.size() >= 2);
-  Geometry::Geometries::const_iterator it = children.begin();
+  auto it = children.begin();
   t_tot.start();
   shared_ptr<const Geometry> operands[2] = {it->second, shared_ptr<const Geometry>()};
   try {
     while (++it != children.end()) {
       operands[1] = it->second;
 
-      typedef CGAL::Epick Hull_kernel;
+      using Hull_kernel = CGAL::Epick;
 
       std::list<CGAL_Polyhedron> P[2];
       std::list<CGAL::Polyhedron_3<Hull_kernel>> result_parts;
@@ -254,8 +269,9 @@ shared_ptr<const Geometry> applyMinkowski(const Geometry::Geometries& children)
 
         auto ps = dynamic_pointer_cast<const PolySet>(operands[i]);
         auto nef = dynamic_pointer_cast<const CGAL_Nef_polyhedron>(operands[i]);
-        if (auto hybrid = dynamic_pointer_cast<const CGALHybridPolyhedron>(operands[i])) {
-          nef = CGALUtils::createNefPolyhedronFromHybrid(*hybrid);
+
+        if (!nef) {
+          nef = CGALUtils::getNefPolyhedronFromGeometry(operands[i]);
         }
 
         if (ps) CGALUtils::createPolyhedronFromPolySet(*ps, poly);
@@ -310,7 +326,7 @@ shared_ptr<const Geometry> applyMinkowski(const Geometry::Geometries& children)
           points[1].clear();
 
           for (int k = 0; k < 2; ++k) {
-            std::list<CGAL_Polyhedron>::iterator it = P[k].begin();
+            auto it = P[k].begin();
             std::advance(it, k == 0?i:j);
 
             CGAL_Polyhedron const& poly = *it;
@@ -396,7 +412,7 @@ shared_ptr<const Geometry> applyMinkowski(const Geometry::Geometries& children)
       if (it != std::next(children.begin())) operands[0].reset();
 
       auto partToGeom = [&](auto& poly) -> shared_ptr<const Geometry> {
-          PolySet *ps = new PolySet(3, /* convex= */ true);
+          auto *ps = new PolySet(3, /* convex= */ true);
           createPolySetFromPolyhedron(poly, *ps);
           return shared_ptr<const Geometry>(ps);
         };

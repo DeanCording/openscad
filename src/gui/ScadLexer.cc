@@ -34,14 +34,10 @@ ScadLexer::ScadLexer(QObject *parent) : QsciLexerCPP(parent)
     "intersection linear_extrude rotate_extrude import group "
     "offset_extrude "
     "projection render surface scale rotate mirror translate "
-    "multmatrix color offset intersection_for roof";
+    "multmatrix color offset intersection_for roof fill";
 
   setFoldComments(true);
   setFoldAtElse(true);
-}
-
-ScadLexer::~ScadLexer()
-{
 }
 
 const char *ScadLexer::language() const
@@ -92,7 +88,6 @@ QStringList ScadLexer::autoCompletionWordSeparators() const
 #include <Qsci/qscilexercustom.h>
 #include <Qsci/qsciscintilla.h>
 
-#include "lexertl/dot.hpp"
 #include "lexertl/generator.hpp"
 #include "lexertl/lookup.hpp"
 
@@ -106,10 +101,6 @@ QStringList ScadLexer::autoCompletionWordSeparators() const
 
 /// See original attempt at https://github.com/openscad/openscad/tree/lexertl/src
 
-Lex::Lex()
-{
-}
-
 void Lex::default_rules()
 {
   rules_.push_state("PATH");
@@ -121,8 +112,8 @@ void Lex::default_rules()
 
   //include and use have a unique syntax
   rules_.push("INITIAL", "use", ekeyword, "PATH");
-  rules_.push("INITIAL", "include", ekeyword, "PATH");  
-  rules_.push("PATH", ".|\n", etext, "INITIAL"); //leave this state; "use" and "include" can also be used as variable names 
+  rules_.push("INITIAL", "include", ekeyword, "PATH");
+  rules_.push("PATH", ".|\n", etext, "INITIAL"); //leave this state; "use" and "include" can also be used as variable names
   rules_.push("PATH", "[ \t\r\n]*<[^>]*>", eQuotedString, "INITIAL");
 
   std::string transformations("translate rotate scale linear_extrude "
@@ -144,10 +135,10 @@ void Lex::default_rules()
   defineRules(models, emodel);
 
   // Operators and Modifier Characters
-  std::string operators("\\+ - \\* \\/ % \\^ < <= >= == != >= > && \\|\\| ! = #");
+  std::string operators(R"(\+ - \* \/ % \^ < <= >= == != >= > && \|\| ! = #)");
   defineRules(operators, eoperator);
 
-  rules_.push("[\"](([\\\\][\"])|[^\"])*[\"]", eQuotedString);
+  rules_.push(R"(["](([\\]["])|[^"])*["])", eQuotedString);
 
   std::string values("true false undef PI");
   defineRules(values, enumber);
@@ -206,8 +197,7 @@ void Lex::lex_results(const std::string& input, int start, LexInterface *const o
   //We currently handle comments (COMMENT State) pretty well.
   //We currently do not handle include/use (PATH State).
   int isstyle = obj->getStyleAt(start - 1);
-  if (isstyle == ecomment)
-    results.state = rules_.state("COMMENT");
+  if (isstyle == ecomment) results.state = rules_.state("COMMENT");
 
   lexertl::lookup(sm, results);
   while (results.id != eEOF) {
@@ -275,24 +265,24 @@ void ScadLexer2::fold(int start, int end)
     int currStyle = editor()->SendScintilla(QsciScintilla::SCI_GETSTYLEAT, i);
 
     bool currStyleIsOtherText = (currStyle == OtherText);
-    if(currStyleIsOtherText){
+    if (currStyleIsOtherText) {
       if ((ch == '{') || (ch == '[') ) {
         levelCurrent++;
       } else if ((ch == '}') || (ch == ']') ) {
         levelCurrent--;
       }
     }
-    
+
 
     bool prevStyleIsComment = (prevStyle == Comment);
     bool currStyleIsComment = (currStyle == Comment);
     bool isStartOfComment = (!prevStyleIsComment) && (currStyleIsComment);
-    bool isEndOfComment   = (prevStyleIsComment) && (!currStyleIsComment);
-    
+    bool isEndOfComment = (prevStyleIsComment) && (!currStyleIsComment);
+
     if (isStartOfComment) {
       levelCurrent++;
     }
-    if (isEndOfComment){
+    if (isEndOfComment) {
       levelCurrent--;
     }
 
@@ -408,7 +398,7 @@ QString ScadLexer2::description(int style) const
   case Comment:
     return "Comment";
   }
-  return QString(style);
+  return {style};
 }
 
 const char *ScadLexer2::language() const

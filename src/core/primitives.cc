@@ -25,7 +25,7 @@
  */
 
 #include "module.h"
-#include "node.h"
+#include "core/node.h"
 #include "PolySet.h"
 #include "Children.h"
 #include "Polygon2d.h"
@@ -35,22 +35,14 @@
 #include "calc.h"
 #include "degree_trig.h"
 #include <sstream>
-#include <assert.h>
+#include <cassert>
 #include <cmath>
 #include <boost/assign/std/vector.hpp>
 #include "ModuleInstantiation.h"
-#include "boost-utils.h"
+#include "primitives.h"
 using namespace boost::assign; // bring 'operator+=()' into scope
 
 #define F_MINIMUM 0.01
-
-struct point2d {
-  double x, y;
-};
-
-struct point3d {
-  double x, y, z;
-};
 
 static void generate_circle(point2d *circle, double r, int fragments)
 {
@@ -111,27 +103,6 @@ static void set_fragments(const Parameters& parameters, const ModuleInstantiatio
 }
 
 
-
-class CubeNode : public LeafNode
-{
-public:
-  CubeNode(const ModuleInstantiation *mi) : LeafNode(mi) {}
-  std::string toString() const override
-  {
-    std::ostringstream stream;
-    stream << "cube(size = ["
-           << x << ", "
-           << y << ", "
-           << z << "], center = "
-           << (center ? "true" : "false") << ")";
-    return stream.str();
-  }
-  std::string name() const override { return "cube"; }
-  const Geometry *createGeometry() const override;
-
-  double x = 1, y = 1, z = 1;
-  bool center = false;
-};
 
 const Geometry *CubeNode::createGeometry() const
 {
@@ -198,7 +169,7 @@ const Geometry *CubeNode::createGeometry() const
   return p;
 }
 
-static std::shared_ptr<AbstractNode> builtin_cube(const ModuleInstantiation *inst, Arguments arguments, Children children)
+static std::shared_ptr<AbstractNode> builtin_cube(const ModuleInstantiation *inst, Arguments arguments, const Children& children)
 {
   auto node = std::make_shared<CubeNode>(inst);
 
@@ -235,27 +206,7 @@ static std::shared_ptr<AbstractNode> builtin_cube(const ModuleInstantiation *ins
 
 
 
-class SphereNode : public LeafNode
-{
-public:
-  SphereNode(const ModuleInstantiation *mi) : LeafNode(mi) {}
-  std::string toString() const override
-  {
-    std::ostringstream stream;
-    stream << "sphere"
-           << "($fn = " << fn
-           << ", $fa = " << fa
-           << ", $fs = " << fs
-           << ", r = " << r
-           << ")";
-    return stream.str();
-  }
-  std::string name() const override { return "sphere"; }
-  const Geometry *createGeometry() const override;
 
-  double fn, fs, fa;
-  double r = 1;
-};
 
 const Geometry *SphereNode::createGeometry() const
 {
@@ -271,7 +222,7 @@ const Geometry *SphereNode::createGeometry() const
 
   auto fragments = Calc::get_fragments_from_r(r, fn, fs, fa);
   int rings = (fragments + 1) / 2;
-// Uncomment the following three lines to enable experimental sphere tesselation
+// Uncomment the following three lines to enable experimental sphere tessellation
 //	if (rings % 2 == 0) rings++; // To ensure that the middle ring is at phi == 0 degrees
 
   auto ring = std::vector<ring_s>(rings);
@@ -329,7 +280,7 @@ sphere_next_r2:
   return p;
 }
 
-static std::shared_ptr<AbstractNode> builtin_sphere(const ModuleInstantiation *inst, Arguments arguments, Children children)
+static std::shared_ptr<AbstractNode> builtin_sphere(const ModuleInstantiation *inst, Arguments arguments, const Children& children)
 {
   auto node = std::make_shared<SphereNode>(inst);
 
@@ -354,32 +305,6 @@ static std::shared_ptr<AbstractNode> builtin_sphere(const ModuleInstantiation *i
 }
 
 
-
-class CylinderNode : public LeafNode
-{
-public:
-  CylinderNode(const ModuleInstantiation *mi) : LeafNode(mi) {}
-  std::string toString() const override
-  {
-    std::ostringstream stream;
-    stream << "cylinder"
-           << "($fn = " << fn
-           << ", $fa = " << fa
-           << ", $fs = " << fs
-           << ", h = " << h
-           << ", r1 = " << r1
-           << ", r2 = " << r2
-           << ", center = " << (center ? "true" : "false")
-           << ")";
-    return stream.str();
-  }
-  std::string name() const override { return "cylinder"; }
-  const Geometry *createGeometry() const override;
-
-  double fn, fs, fa;
-  double r1 = 1, r2 = 1, h = 1;
-  bool center = false;
-};
 
 const Geometry *CylinderNode::createGeometry() const
 {
@@ -449,7 +374,7 @@ const Geometry *CylinderNode::createGeometry() const
   return p;
 }
 
-static std::shared_ptr<AbstractNode> builtin_cylinder(const ModuleInstantiation *inst, Arguments arguments, Children children)
+static std::shared_ptr<AbstractNode> builtin_cylinder(const ModuleInstantiation *inst, Arguments arguments, const Children& children)
 {
   auto node = std::make_shared<CylinderNode>(inst);
 
@@ -505,20 +430,6 @@ static std::shared_ptr<AbstractNode> builtin_cylinder(const ModuleInstantiation 
 }
 
 
-
-class PolyhedronNode : public LeafNode
-{
-public:
-  PolyhedronNode (const ModuleInstantiation *mi) : LeafNode(mi) {}
-  std::string toString() const override;
-  std::string name() const override { return "polyhedron"; }
-  const Geometry *createGeometry() const override;
-
-  std::vector<point3d> points;
-  std::vector<std::vector<size_t>> faces;
-  int convexity = 1;
-};
-
 std::string PolyhedronNode::toString() const
 {
   std::ostringstream stream;
@@ -571,7 +482,7 @@ const Geometry *PolyhedronNode::createGeometry() const
   return p;
 }
 
-static std::shared_ptr<AbstractNode> builtin_polyhedron(const ModuleInstantiation *inst, Arguments arguments, Children children)
+static std::shared_ptr<AbstractNode> builtin_polyhedron(const ModuleInstantiation *inst, Arguments arguments, const Children& children)
 {
   auto node = std::make_shared<PolyhedronNode>(inst);
 
@@ -621,7 +532,7 @@ static std::shared_ptr<AbstractNode> builtin_polyhedron(const ModuleInstantiatio
         if (pointIndexValue.type() != Value::Type::NUMBER) {
           LOG(message_group::Error, inst->location(), parameters.documentRoot(), "Unable to convert faces[%1$d][%2$d] = %3$s to a number", faceIndex, pointIndexIndex, pointIndexValue.toEchoStringNoThrow());
         } else {
-          size_t pointIndex = (size_t)pointIndexValue.toDouble();
+          auto pointIndex = (size_t)pointIndexValue.toDouble();
           if (pointIndex < node->points.size()) {
             face.push_back(pointIndex);
           } else {
@@ -643,27 +554,6 @@ static std::shared_ptr<AbstractNode> builtin_polyhedron(const ModuleInstantiatio
   return node;
 }
 
-
-
-class SquareNode : public LeafNode
-{
-public:
-  SquareNode(const ModuleInstantiation *mi) : LeafNode(mi) {}
-  std::string toString() const override
-  {
-    std::ostringstream stream;
-    stream << "square(size = ["
-           << x << ", "
-           << y << "], center = "
-           << (center ? "true" : "false") << ")";
-    return stream.str();
-  }
-  std::string name() const override { return "square"; }
-  const Geometry *createGeometry() const override;
-
-  double x = 1, y = 1;
-  bool center = false;
-};
 
 const Geometry *SquareNode::createGeometry() const
 {
@@ -689,7 +579,7 @@ const Geometry *SquareNode::createGeometry() const
   return p;
 }
 
-static std::shared_ptr<AbstractNode> builtin_square(const ModuleInstantiation *inst, Arguments arguments, Children children)
+static std::shared_ptr<AbstractNode> builtin_square(const ModuleInstantiation *inst, Arguments arguments, const Children& children)
 {
   auto node = std::make_shared<SquareNode>(inst);
 
@@ -724,31 +614,6 @@ static std::shared_ptr<AbstractNode> builtin_square(const ModuleInstantiation *i
   return node;
 }
 
-
-
-
-class CircleNode : public LeafNode
-{
-public:
-  CircleNode(const ModuleInstantiation *mi) : LeafNode(mi) {}
-  std::string toString() const override
-  {
-    std::ostringstream stream;
-    stream << "circle"
-           << "($fn = " << fn
-           << ", $fa = " << fa
-           << ", $fs = " << fs
-           << ", r = " << r
-           << ")";
-    return stream.str();
-  }
-  std::string name() const override { return "circle"; }
-  const Geometry *createGeometry() const override;
-
-  double fn, fs, fa;
-  double r = 1;
-};
-
 const Geometry *CircleNode::createGeometry() const
 {
   auto p = new Polygon2d();
@@ -768,7 +633,7 @@ const Geometry *CircleNode::createGeometry() const
   return p;
 }
 
-static std::shared_ptr<AbstractNode> builtin_circle(const ModuleInstantiation *inst, Arguments arguments, Children children)
+static std::shared_ptr<AbstractNode> builtin_circle(const ModuleInstantiation *inst, Arguments arguments, const Children& children)
 {
   auto node = std::make_shared<CircleNode>(inst);
 
@@ -793,19 +658,6 @@ static std::shared_ptr<AbstractNode> builtin_circle(const ModuleInstantiation *i
 }
 
 
-
-class PolygonNode : public LeafNode
-{
-public:
-  PolygonNode (const ModuleInstantiation *mi) : LeafNode(mi) {}
-  std::string toString() const override;
-  std::string name() const override { return "polygon"; }
-  const Geometry *createGeometry() const override;
-
-  std::vector<point2d> points;
-  std::vector<std::vector<size_t>> paths;
-  int convexity = 1;
-};
 
 std::string PolygonNode::toString() const
 {
@@ -876,7 +728,7 @@ const Geometry *PolygonNode::createGeometry() const
   return p;
 }
 
-static std::shared_ptr<AbstractNode> builtin_polygon(const ModuleInstantiation *inst, Arguments arguments, Children children)
+static std::shared_ptr<AbstractNode> builtin_polygon(const ModuleInstantiation *inst, Arguments arguments, const Children& children)
 {
   auto node = std::make_shared<PolygonNode>(inst);
 
@@ -915,7 +767,7 @@ static std::shared_ptr<AbstractNode> builtin_polygon(const ModuleInstantiation *
           if (pointIndexValue.type() != Value::Type::NUMBER) {
             LOG(message_group::Error, inst->location(), parameters.documentRoot(), "Unable to convert paths[%1$d][%2$d] = %3$s to a number", pathIndex, pointIndexIndex, pointIndexValue.toEchoStringNoThrow());
           } else {
-            size_t pointIndex = (size_t)pointIndexValue.toDouble();
+            auto pointIndex = (size_t)pointIndexValue.toDouble();
             if (pointIndex < node->points.size()) {
               path.push_back(pointIndex);
             } else {
