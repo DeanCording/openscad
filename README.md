@@ -10,6 +10,8 @@
 OpenSCAD is a software for creating solid 3D CAD objects. It is free software and
 available for Linux/UNIX, MS Windows and macOS.</p>
 
+This fork includes the Offset Extrude enhacement patch, modified to work with the current OpenSCAD node framework.
+
 Unlike most free software for creating 3D models (such as the famous
 application Blender), OpenSCAD focuses on the CAD aspects rather than the 
 artistic aspects of 3D modeling. Thus this might be the application you are
